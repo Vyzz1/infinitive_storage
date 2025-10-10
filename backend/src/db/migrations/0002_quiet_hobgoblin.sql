@@ -1,0 +1,1 @@
+ALTER TABLE "files" ALTER COLUMN "extension" SET DATA TYPE text;
