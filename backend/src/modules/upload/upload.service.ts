@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import s3Client from 'src/s3/s3.client';
 import { CreateFileRequest, FileType } from '../file/dto';
 import { FileService } from '../file/file.service';
+import { QueueService } from 'src/queue/queue.service';
+import { shouldGenerateThumbnail } from 'src/common/constants/file-type';
 
 @Injectable()
 export class UploadService {
-  constructor(private readonly fileService: FileService) {}
+  constructor(
+    private readonly fileService: FileService,
+    private readonly queueService: QueueService,
+  ) {}
   private async handleUploadFileToS3(
     file: Express.Multer.File,
     userId: string,
@@ -18,14 +23,23 @@ export class UploadService {
     const fileURL = s3Client.generatePublicUrl(decodedName);
     const fileParams: CreateFileRequest = {
       fileName: decodedName,
-      extension: file.mimetype,
+      extension: file.originalname.split('.').pop() || '',
       url: fileURL,
       folderId,
       size: file.size,
       type: this.getFileType(file.mimetype),
     };
-    await this.fileService.createFile(userId, fileParams);
+    const { id } = await this.fileService.createFile(userId, fileParams);
 
+    if (shouldGenerateThumbnail(fileParams.extension)) {
+      const thumbMsg = {
+        id,
+        filename: file.originalname,
+        mimetype: file.mimetype,
+        data: file.buffer.toString('base64'),
+      };
+      await this.queueService.publishThumbnailTask(thumbMsg);
+    }
     return s3Client.generatePublicUrl(decodedName);
   }
 

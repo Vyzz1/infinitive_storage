@@ -9,6 +9,7 @@ declare type FileDbItem = {
   location: string;
   folderId: string | null;
   size: number;
+  thumbnail: string | null;
 };
 
 declare type FolderDbItem = {

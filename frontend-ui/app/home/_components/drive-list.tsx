@@ -8,7 +8,7 @@ interface DriveTableProps {
 export function DriveTable({ folders, files }: DriveTableProps) {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-[1fr_200px_200px_150px_50px] gap-4 border-b border-border px-6 py-3 text-sm font-medium text-muted-foreground">
+      <div className="grid grid-cols-4 gap-4 border-b border-border px-6 py-3 text-sm font-medium text-muted-foreground">
         <div className="flex items-center gap-2">
           <span>Name</span>
         </div>

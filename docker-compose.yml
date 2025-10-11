@@ -11,6 +11,14 @@ services:
       - "5432:5432"
     volumes:
       - data-volume:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:4.0-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: vy
+      RABBITMQ_DEFAULT_PASS: vy
 
   redis:
     environment:
@@ -28,6 +36,8 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=123
     ports:
       - "5050:80"
+    depends_on:
+      - postgres13
 
 volumes:
   data-volume:

@@ -1,0 +1,36 @@
+{
+  "name": "thumbnail",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run worker.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/amqplib": "^0.10.7",
+    "@types/express": "^5.0.3",
+    "@types/mime-types": "^3.0.1",
+    "@types/multer": "^2.0.0",
+    "@types/streamifier": "^0.1.2",
+    "@types/tmp": "^0.2.6",
+    "amqplib": "^0.10.9",
+    "axios": "^1.12.2",
+    "cloudinary": "^2.7.0",
+    "cloudmersive-convert-api-client": "^2.8.0",
+    "convertapi": "^1.15.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "form-data": "^4.0.4",
+    "mime-types": "^3.0.1",
+    "multer": "^2.0.2",
+    "pdf2pic": "^3.2.0",
+    "sharp": "^0.34.4",
+    "streamifier": "^0.1.1",
+    "tmp": "^0.2.5"
+  }
+}

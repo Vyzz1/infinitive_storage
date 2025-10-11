@@ -16,7 +16,7 @@ const navigationItems = [
   {
     title: "Home",
     icon: Home,
-    url: "/",
+    url: "/home",
   },
   {
     title: "My Drive",

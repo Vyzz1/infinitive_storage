@@ -51,7 +51,24 @@ export class FileService {
     if (!newFile) {
       throw new BadRequestException('Failed to create file');
     }
+
     return newFile;
+  }
+
+  async updateThumbnail(fileId: string, thumbnailUrl: string) {
+    const existingFile = await db
+      .select()
+      .from(files)
+      .where(eq(files.id, fileId))
+      .limit(1);
+    if (!existingFile || existingFile.length === 0) {
+      throw new NotFoundException('File not found');
+    }
+    await db
+      .update(files)
+      .set({ thumbnail: thumbnailUrl, updatedAt: new Date() })
+      .where(eq(files.id, fileId));
+    return;
   }
 
   async getFiles(userId: string, query: GetFilesQuery) {
