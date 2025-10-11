@@ -8,9 +8,15 @@ import db from 'src/db';
 import { eq } from 'drizzle-orm';
 import { users } from 'src/db/schema';
 import { PasswordService } from '../password/password.service';
+import { QueueService } from 'src/queue/queue.service';
 
 @Injectable()
 export class AuthService {
+  constructor(
+    private readonly passwordService: PasswordService,
+    private readonly queueService: QueueService,
+  ) {}
+
   async signIn(body: any) {
     const user = await db.query.users.findFirst({
       where: eq(users.email, body.email),
@@ -28,7 +34,6 @@ export class AuthService {
     const { password: _, ...rest } = user;
     return rest;
   }
-  constructor(private readonly passwordService: PasswordService) {}
 
   async signUp(request: SignUpDto) {
     const findExist = await db.query.users.findFirst({
@@ -57,6 +62,11 @@ export class AuthService {
       });
 
     //TODO: send welcome email
+
+    await this.queueService.publishWelcomeEmailTask(
+      newUser.email,
+      newUser.name,
+    );
 
     return newUser;
   }

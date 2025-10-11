@@ -22,6 +22,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { useFolderStore } from "../_context/folder-context";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
 const newFolderSchema = z.object({
   name: z.string().min(3, "At least 3 characters"),
@@ -38,10 +39,12 @@ export default function NewFolder() {
 
   const { open, setOpen } = useFolderStore();
 
+  const { id } = useParams<{ id: string }>();
+
   async function onSubmit(data: z.infer<typeof newFolderSchema>) {
     setLoading(true);
     try {
-      const res = await createFolder(data.name);
+      const res = await createFolder(data.name, id);
       if (res) {
         form.reset({
           name: "",

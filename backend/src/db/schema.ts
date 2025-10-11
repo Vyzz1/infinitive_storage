@@ -67,6 +67,7 @@ export const files = pgTable(
     folderId: varchar('folder_id', { length: 255 }),
     userId: varchar('account_id', { length: 255 }).notNull(),
     size: integer('size').notNull(),
+    thumbnail: text('thumbnail').unique(),
   },
   (table) => [
     index('file_user_id_idx').on(table.userId),

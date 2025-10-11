@@ -2,21 +2,22 @@ import React from "react";
 import { getRootFile } from "../actions/file.action";
 import { getRootFolder } from "../actions/folder.action";
 import Header from "@/components/header";
-import { DriveTable } from "./_components/table-list";
+
+import ViewSwitcher from "./_components/view-swticher";
+import EmptyState from "@/components/empty-state";
 
 export default async function Homepage() {
   const filesRoot = await getRootFile();
   const folderRoot = await getRootFolder();
 
-  console.log("Files Root:", filesRoot);
-  console.log("Folder root", folderRoot);
+  if (filesRoot?.length === 0 && folderRoot?.length === 0) {
+    return <EmptyState />;
+  }
 
   return (
     <section className="min-h-screen bg-background">
       <Header title="Your Infinite Drive" />
-      <div className="py-6">
-        <DriveTable folders={folderRoot!} files={filesRoot!} />
-      </div>
+      <ViewSwitcher folders={folderRoot} files={filesRoot} />
     </section>
   );
 }

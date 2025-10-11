@@ -1,11 +1,17 @@
 {
   "folders": [
-	{
-		"path": "../../.."
-	},
-	{
-		"path": "../../../../frontend-ui"
-	}
-],
-  "settings": {}
+    {
+      "path": "../../..",
+    },
+    {
+      "path": "../../../../frontend-ui",
+    },
+    {
+      "path": "../../../../file-processing",
+    },
+    {
+      "path": "../../../../message-service",
+    },
+  ],
+  "settings": {},
 }

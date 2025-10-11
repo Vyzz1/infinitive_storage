@@ -17,14 +17,35 @@ import {
 @Injectable()
 export class FolderService {
   async createFolder(userId: string, folderData: CreateFolderRequest) {
+    let location = 'root';
+    if (folderData.parentId) {
+      const folderList = await db
+        .select()
+        .from(folders)
+        .where(
+          and(eq(folders.id, folderData.parentId), eq(folders.userId, userId)),
+        )
+        .limit(1);
+
+      const folder = folderList[0];
+      if (!folder) {
+        throw new NotFoundException('Parent folder not found');
+      }
+
+      location =
+        folder.location === 'root'
+          ? folder.name
+          : `${folder.location}/${folder.name}`;
+    }
+
     const [newFolder] = await db
       .insert(folders)
       .values({
-        userId,
         ...folderData,
+        userId,
+        location,
       })
       .returning();
-
     if (!newFolder) {
       throw new BadRequestException('Failed to create folder');
     }

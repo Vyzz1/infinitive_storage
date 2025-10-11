@@ -25,7 +25,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
         router.push(`/home/folder/${folder.id}`);
       }}
       key={folder.id}
-      className="grid grid-cols-[1fr_200px_200px_150px_50px] gap-4 border-b border-border px-6 py-3 text-sm hover:bg-muted/50 transition-colors cursor-pointer"
+      className="grid grid-cols-4 gap-4 border-b border-border px-6 py-3 text-sm hover:bg-muted/50 transition-colors cursor-pointer"
     >
       <div className="flex items-center gap-3">
         <FolderIcon folder={folder} />
@@ -33,7 +33,9 @@ export default function FolderItem({ folder }: FolderItemProps) {
       </div>
 
       <div className="flex items-center text-muted-foreground">
-        {formatDistanceToNow(folder.updatedAt)}
+        {folder.updatedAt
+          ? formatDistanceToNow(folder.updatedAt!)
+          : formatDistanceToNow(folder.createdAt!)}
       </div>
       <div className="flex items-center text-muted-foreground">—</div>
       <div className="flex items-center justify-end">

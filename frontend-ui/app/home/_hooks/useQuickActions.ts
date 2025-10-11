@@ -3,12 +3,15 @@ import { useUploadStore } from "../_context/upload-context";
 import { useFolderStore } from "../_context/folder-context";
 import { createFolder } from "@/app/actions/folder.action";
 import { invalidateTag } from "@/app/actions/file.action";
+import { useParams } from "next/navigation";
 
 export default function useQuickActions() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const folderInputRef = useRef<HTMLInputElement | null>(null);
   const { addUpload } = useUploadStore();
   const { setOpen } = useFolderStore();
+
+  const { id } = useParams<{ id: string }>();
 
   const openFolder = useCallback(() => {
     setOpen(true);
@@ -23,10 +26,11 @@ export default function useQuickActions() {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+
     if (!files) return;
 
     for (const file of Array.from(files)) {
-      await addUpload(file);
+      await addUpload(file, id);
     }
     invalidateTag("file");
     e.target.value = "";

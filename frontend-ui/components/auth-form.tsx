@@ -70,7 +70,7 @@ export default function AuthForm({ authType }: AuthFormProps) {
       );
 
       if (!res.ok) {
-        toast.error("Invalid email or password");
+        throw new Error("Failed to sign in");
       }
       const resData = await res.json();
 
@@ -83,6 +83,7 @@ export default function AuthForm({ authType }: AuthFormProps) {
 
       router.push("/home");
     } catch (error) {
+      toast.error("Invalid email or password. Please try again.");
       console.error("Sign in error:", error);
     } finally {
       setIsLoading(false);

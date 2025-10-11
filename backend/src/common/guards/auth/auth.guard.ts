@@ -13,6 +13,7 @@ export class AuthGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (context.getType() !== 'http') return true;
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -22,7 +23,6 @@ export class AuthGuard implements CanActivate {
     }
     const request = context.switchToHttp().getRequest();
 
-    console.log('Session Data:', request.session.user);
     const isValid = request.session && request.session.user ? true : false;
     if (!isValid) {
       throw new UnauthorizedException();
