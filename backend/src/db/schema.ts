@@ -51,6 +51,7 @@ export const fileTypeEnum = pgEnum('file_type', [
   'other',
   'audio',
   'pdf',
+  'code',
 ]);
 
 export const files = pgTable(

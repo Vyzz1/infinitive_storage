@@ -4,6 +4,7 @@ import { CreateFileRequest, FileType } from '../file/dto';
 import { FileService } from '../file/file.service';
 import { QueueService } from 'src/queue/queue.service';
 import { shouldGenerateThumbnail } from 'src/common/constants/file-type';
+import { codeExts } from 'src/common/constants/ext';
 
 @Injectable()
 export class UploadService {
@@ -65,6 +66,12 @@ export class UploadService {
       mime.startsWith('text/')
     )
       return FileType.DOCUMENT;
+
+    const ext = mime.split('/').pop();
+
+    if (codeExts.includes(ext || '')) {
+      return FileType.CODE;
+    }
 
     return FileType.OTHER;
   }

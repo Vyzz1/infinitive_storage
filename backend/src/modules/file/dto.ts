@@ -17,6 +17,7 @@ export enum FileType {
   OTHER = 'other',
   AUDIO = 'audio',
   PDF = 'pdf',
+  CODE = 'code',
 }
 
 export class CreateFileRequest {
