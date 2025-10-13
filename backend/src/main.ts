@@ -7,6 +7,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { sessionConstants } from './common/constants/session';
 import connectRedis from './redis/redis.client';
+import { LoggerInterceptor } from './common/log/logger.middleware';
 const { secret, resave, saveUninitialized, cookie } = sessionConstants;
 
 async function bootstrap() {
@@ -34,6 +35,8 @@ async function bootstrap() {
   );
 
   app.useGlobalPipes(new ClassValidatorPipe());
+
+  app.useGlobalInterceptors(new LoggerInterceptor());
 
   app.enableCors({
     origin: ['http://localhost:3000'],

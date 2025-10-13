@@ -26,6 +26,11 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 
 COPY wait-for-it.sh ./wait-for-it.sh
+COPY start.sh ./start.sh
+COPY drizzle.config.ts ./drizzle.config.ts
+
+COPY src/db/schema.ts ./src/db/schema.ts
+
 
 RUN apk add --no-cache dos2unix bash \
     && dos2unix /app/wait-for-it.sh \
@@ -34,7 +39,6 @@ RUN apk add --no-cache dos2unix bash \
 
 COPY .env .env
 
+CMD [ "./start.sh" ]
 
-
-CMD [ "node", "dist/src/main.js" ]
 

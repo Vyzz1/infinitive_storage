@@ -31,6 +31,7 @@ import { QueueModule } from './queue/queue.module';
       provide: 'APP_GUARD',
       useClass: AuthGuard,
     },
+
     FileService,
     FolderService,
   ],

@@ -1,10 +1,10 @@
+import { codeEtxs } from "@/constants/ext";
 import { FileText, FileImage, FileVideo, FileAudio, File } from "lucide-react";
 import Image from "next/image";
 
 interface FileIconProps {
   file: FileDbItem;
   className?: string;
-  isCode?: boolean;
 }
 
 const iconMap: Record<string, string> = {
@@ -21,14 +21,13 @@ const iconMap: Record<string, string> = {
   sql: "database",
 };
 
-export function FileIcon({
-  file,
-  className = "h-5 w-5",
-  isCode = false,
-}: FileIconProps) {
+export function FileIcon({ file, className = "h-5 w-5" }: FileIconProps) {
   const iconClass = className;
+  const isCodeFile = codeEtxs.includes(file.extension.toLowerCase());
 
-  if (isCode) {
+  console.log("FileIcon -> file:", file);
+
+  if (isCodeFile) {
     const icon =
       iconMap[file.extension.toLowerCase()] || file.extension.toLowerCase();
 

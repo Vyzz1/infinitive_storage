@@ -2,6 +2,7 @@
 
 import { FileIcon } from "@/components/file-icon";
 import { Button } from "@/components/ui/button";
+import { codeEtxs } from "@/constants/ext";
 import { MoreVerticalIcon } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -12,28 +13,7 @@ export default function FileThumb({ file }: { file: FileDbItem }) {
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const isCodeFile = [
-    "js",
-    "ts",
-    "json",
-    "txt",
-    "html",
-    "css",
-    "py",
-    "java",
-    "sql",
-    "md",
-    "jsx",
-    "tsx",
-    "xml",
-    "yml",
-    "yaml",
-    "sh",
-    "rb",
-    "go",
-    "txt",
-  ].includes(file.extension.toLowerCase());
-
+  const isCodeFile = codeEtxs.includes(file.extension.toLowerCase());
   useEffect(() => {
     if (isCodeFile) {
       setLoading(true);
@@ -53,7 +33,7 @@ export default function FileThumb({ file }: { file: FileDbItem }) {
       <div className="flex justify-between items-start gap-2 mb-3">
         <div className="flex-1 flex items-center gap-2 min-w-0">
           <div className="transition-transform group-hover:scale-110">
-            <FileIcon file={file} isCode={isCodeFile} />
+            <FileIcon file={file} />
           </div>
           <p className="text-sm font-medium truncate group-hover:text-foreground transition-colors">
             {file.fileName}

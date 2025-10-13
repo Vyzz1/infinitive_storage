@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import db from './db';
 
 @Injectable()
 export class AppService {
@@ -8,6 +7,8 @@ export class AppService {
   }
 
   getHealth() {
-    return db.query.users.findMany();
+    return {
+      status: 'ok',
+    };
   }
 }

@@ -1,5 +1,5 @@
 
-FROM oven/bun:1 AS base
+FROM oven/bun:canary-alpine AS base
 
 WORKDIR /app
 
