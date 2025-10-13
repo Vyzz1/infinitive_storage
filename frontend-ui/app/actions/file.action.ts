@@ -1,12 +1,11 @@
 "use server";
 import { revalidateTag } from "next/cache";
-import getCookies from ".";
-import { API_URL } from "@/constants/api";
+import getCookies, { apiUrl } from ".";
 
 export const getRootFile = async (): Promise<FileDbItem[] | null> => {
   const cookie = await getCookies();
 
-  const res = await fetch(`${API_URL}/file/root`, {
+  const res = await fetch(`${apiUrl}/file/root`, {
     method: "GET",
 
     next: {
@@ -31,7 +30,7 @@ export const getFilesInFolder = async (
 ): Promise<FileDbItem[] | null> => {
   const cookie = await getCookies();
 
-  const res = await fetch(`${API_URL}/file/folder/${folderId}`, {
+  const res = await fetch(`${apiUrl}/file/folder/${folderId}`, {
     method: "GET",
     next: {
       tags: ["file"],

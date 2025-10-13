@@ -72,14 +72,6 @@ export default function AuthForm({ authType }: AuthFormProps) {
       if (!res.ok) {
         throw new Error("Failed to sign in");
       }
-      const resData = await res.json();
-
-      await fetch("/api/auth/set-cookie", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(resData),
-        credentials: "include",
-      });
 
       router.push("/home");
     } catch (error) {
@@ -108,14 +100,9 @@ export default function AuthForm({ authType }: AuthFormProps) {
         }
       );
 
-      const resData = await res.json();
-
-      await fetch("/api/set-cookie", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(resData),
-        credentials: "include",
-      });
+      if (!res.ok) {
+        throw new Error("Failed to sign up");
+      }
 
       router.push("/home");
     } catch (error) {

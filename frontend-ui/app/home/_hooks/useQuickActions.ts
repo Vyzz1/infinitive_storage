@@ -61,7 +61,7 @@ export default function useQuickActions() {
       const folderName = parts[parts.length - 1];
       const parentPath = parts.slice(0, -1).join("/");
 
-      const parentId = parentPath ? folderMap.get(parentPath) ?? null : null;
+      const parentId = parentPath ? folderMap.get(parentPath) : id;
 
       if (!folderMap.has(folderPath)) {
         const newFolder = await createFolder(folderName, parentId);
@@ -73,8 +73,9 @@ export default function useQuickActions() {
       const parts = file.webkitRelativePath.split("/");
       const folderPath = parts.slice(0, -1).join("/");
 
-      const parentId = folderMap.get(folderPath) ?? null;
+      const parentId = folderMap.get(folderPath) ?? id;
       console.log("Parent Id", parentId);
+
       await addUpload(file, parentId!);
     }
 

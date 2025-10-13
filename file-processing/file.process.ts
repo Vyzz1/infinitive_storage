@@ -39,6 +39,10 @@ export class FileProcessor {
           buffer,
           filename
         );
+        uploadBuffer =
+          await this.cloudMersiveService.cloudmersivePdfToThumbnail(
+            uploadBuffer
+          );
         resourceType = "image";
       } //else if (mimetype === "application/pdf") {
       //console.log("PDF detected, uploading directly to Cloudinary...");
@@ -52,7 +56,7 @@ export class FileProcessor {
       }
 
       const uploadOptions: any = {
-        folder: "food-ordering-asp.net",
+        folder: "thumbail_worker",
         resource_type: resourceType,
         format: "png",
         transformation: [

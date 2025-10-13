@@ -5,6 +5,7 @@ const connectRedis = async () => {
   try {
     const redis = createClient({
       url: process.env.REDIS_URL,
+      password: 'secret',
     });
     await redis.connect();
     console.log('Connected to Redis');

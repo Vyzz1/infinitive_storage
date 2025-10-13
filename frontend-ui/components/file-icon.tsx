@@ -1,13 +1,46 @@
 import { FileText, FileImage, FileVideo, FileAudio, File } from "lucide-react";
+import Image from "next/image";
 
 interface FileIconProps {
   file: FileDbItem;
   className?: string;
+  isCode?: boolean;
 }
 
-export function FileIcon({ file, className = "h-5 w-5" }: FileIconProps) {
+const iconMap: Record<string, string> = {
+  js: "javascript",
+  ts: "typescript",
+  jsx: "react",
+  tsx: "react",
+  py: "python",
+  yml: "yaml",
+  sh: "powershell",
+  rb: "ruby",
+  md: "markdown",
+  html: "html",
+  sql: "database",
+};
+
+export function FileIcon({
+  file,
+  className = "h-5 w-5",
+  isCode = false,
+}: FileIconProps) {
   const iconClass = className;
 
+  if (isCode) {
+    const icon =
+      iconMap[file.extension.toLowerCase()] || file.extension.toLowerCase();
+
+    return (
+      <Image
+        src={`https://raw.githubusercontent.com/material-extensions/vscode-material-icon-theme/refs/heads/main/icons/${icon}.svg`}
+        alt={file.fileName}
+        width={20}
+        height={20}
+      />
+    );
+  }
   switch (file.type) {
     case "image":
       return <FileImage className={`${iconClass} text-red-500`} />;
@@ -19,6 +52,7 @@ export function FileIcon({ file, className = "h-5 w-5" }: FileIconProps) {
       return <FileText className={`${iconClass} text-red-500`} />;
     case "document":
       return <FileText className={`${iconClass} text-blue-500`} />;
+
     default:
       return <File className={`${iconClass} text-muted-foreground`} />;
   }

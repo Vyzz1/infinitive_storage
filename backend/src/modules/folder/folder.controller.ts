@@ -42,6 +42,10 @@ export class FolderController {
     return this.folderService.getRootFolders(user.id);
   }
 
+  @Get('breadcrumbs/:id')
+  async getFolderBreadcrumbs(@User() user: any, @Param('id') id: string) {
+    return this.folderService.getFolderBreadcrumb(id, user.id);
+  }
   @Get(':id')
   async getFolderById(@User() user: any, @Param('id') id: string) {
     return this.folderService.getFolderById(user.id, id);

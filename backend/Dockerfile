@@ -1,0 +1,40 @@
+FROM node:24-alpine AS builder
+
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build && ls -R dist
+
+
+
+FROM node:24-alpine AS runner
+
+
+WORKDIR /app
+
+
+COPY package*.json ./
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/dist ./dist
+
+COPY wait-for-it.sh ./wait-for-it.sh
+
+RUN apk add --no-cache dos2unix bash \
+    && dos2unix /app/wait-for-it.sh \
+    && chmod +x /app/wait-for-it.sh \
+    && apk del dos2unix
+
+COPY .env .env
+
+
+
+CMD [ "node", "dist/src/main.js" ]
+

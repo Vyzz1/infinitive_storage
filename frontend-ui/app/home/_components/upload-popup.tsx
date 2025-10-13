@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   X,
   ChevronDown,
@@ -32,11 +32,16 @@ export function UploadPopup() {
   const { uploads, cancelUpload, removeUpload, clearCompleted } =
     useUploadStore();
   const [isExpanded, setIsExpanded] = useState(true);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(uploads.length > 0);
 
   const activeUploads = uploads.filter((u) => u.status === "uploading");
   const completedUploads = uploads.filter((u) => u.status === "completed");
 
+  useEffect(() => {
+    if (uploads.length > 0) {
+      setIsVisible(true);
+    }
+  }, [uploads.length]);
   if (uploads.length === 0 || !isVisible) {
     return null;
   }

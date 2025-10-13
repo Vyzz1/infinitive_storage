@@ -18,8 +18,6 @@ const compileTemplate = async (
   templateName: string,
   data: Record<string, any>
 ) => {
-  // Resolve template path relative to this module's directory so it points
-  // to `message-service/templates` when running from the package source.
   const filePath = path.join(
     __dirname,
     "templates",

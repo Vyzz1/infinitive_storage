@@ -13,3 +13,9 @@ const getCookies = async () => {
 };
 
 export default getCookies;
+
+const apiUrl =
+  process.env.INTERNAL_API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8888/api";
+export { apiUrl };
