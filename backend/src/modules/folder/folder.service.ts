@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, isNull, like } from 'drizzle-orm';
+import { and, asc, desc, eq, isNull, like, sql } from 'drizzle-orm';
 import { PagedResult } from 'src/common/shared/paged-result';
 import db from 'src/db';
 import { files, folders } from 'src/db/schema';
@@ -58,6 +58,27 @@ export class FolderService {
       .from(folders)
       .where(and(eq(folders.userId, userId), isNull(folders.parentId)))
       .orderBy(desc(folders.createdAt));
+  }
+
+  async getFolderBreadcrumb(folderId: string, userId: string) {
+    const result = await db.execute(
+      sql`
+      WITH RECURSIVE folder_path AS (
+        SELECT id, name, parent_id
+        FROM folders
+        WHERE id = ${folderId} AND user_id = ${userId}
+
+        UNION ALL
+
+        SELECT f.id, f.name, f.parent_id
+        FROM folders f
+        INNER JOIN folder_path fp ON f.id = fp.parent_id
+      )
+      SELECT id, name FROM folder_path;
+    `,
+    );
+
+    return result.rows.reverse();
   }
 
   async getFolders(userId: string, query: GetFoldersQuery) {

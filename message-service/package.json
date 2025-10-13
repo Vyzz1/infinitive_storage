@@ -4,8 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run worker.ts",
-    "start": "bun run worker.ts"
+    "build": "tsc",
+    "start": "bun run ./dist/worker.js",
+    "dev": "bun run --watch worker.ts"
   },
   "dependencies": {
     "@types/nodemailer": "^7.0.2",
@@ -13,7 +14,7 @@
     "dotenv": "^16.4.5",
     "handlebars": "^4.7.8",
     "nodemailer": "^7.0.9",
-    "resend": "^3.2.0"
+    "resend": "^6.1.2"
   },
   "devDependencies": {
     "@types/bun": "latest",

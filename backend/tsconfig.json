@@ -21,7 +21,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["node", "express", "express-session", "Multer"],
+    "types": ["node", "express", "express-session", "multer"],
     "typeRoots": ["./node_modules/@types", "./src/types"]
   }
 }

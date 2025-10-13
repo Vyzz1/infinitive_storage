@@ -16,6 +16,7 @@ export default function RightClickContext() {
     openFolder,
     uploadFile,
     uploadFolder,
+    folderChange,
   } = useQuickActions();
   return (
     <>
@@ -32,13 +33,17 @@ export default function RightClickContext() {
         type="file"
         hidden
         id="folder-right-click"
-        {...({ webkitdirectory: true } as any)}
+        {...({ webkitdirectory: "" } as any)}
+        {...({ directory: "" } as any)}
         multiple
         ref={folderInputRef}
-        onChange={fileChange}
+        onChange={folderChange}
       />
 
-      <ContextMenuContent className="w-52">
+      <ContextMenuContent
+        onContextMenu={(e) => e.preventDefault()}
+        className="w-52 "
+      >
         <ContextMenuItem
           onClick={() => {
             uploadFile();

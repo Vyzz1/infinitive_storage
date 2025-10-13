@@ -48,8 +48,8 @@ export default function ActionButton() {
         type="file"
         hidden
         multiple
-        webkitdirectory={"true"}
-        directory=""
+        {...{ webkitdirectory: "" }}
+        {...{ directory: "" }}
         ref={folderInputRef}
         onChange={folderChange}
       />

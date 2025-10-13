@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres13:
     image: postgres:13.21-alpine3.21
@@ -11,23 +9,29 @@ services:
       - "5432:5432"
     volumes:
       - data-volume:/var/lib/postgresql/data
+    networks:
+      - backend-net
+
   rabbitmq:
     image: rabbitmq:4.0-management-alpine
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: vy
-      RABBITMQ_DEFAULT_PASS: vy
+      - RABBITMQ_DEFAULT_USER=vy
+      - RABBITMQ_DEFAULT_PASS=vy
+    networks:
+      - backend-net
 
   redis:
-    environment:
-      - REDIS_PASSWORD=secret
     image: redis:7-alpine
+    command: redis-server --requirepass secret
     ports:
       - "6379:6379"
     volumes:
       - redis-volume:/data
+    networks:
+      - backend-net
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -38,7 +42,121 @@ services:
       - "5050:80"
     depends_on:
       - postgres13
+    networks:
+      - backend-net
+
+  myloadbalancer:
+    image: nginx:1.27-alpine
+    ports:
+      - "8888:80"
+    depends_on:
+      - backend-api
+      - backend-api-2
+      - backend-api-3
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - backend-net
+
+  backend-api: &backend-api
+    container_name: backend-api-1
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    expose:
+      - "8000"
+    depends_on:
+      - postgres13
+      - rabbitmq
+      - redis
+    command:
+      [
+        "/app/wait-for-it.sh",
+        "postgres13:5432",
+        "--",
+        "/app/wait-for-it.sh",
+        "rabbitmq:5672",
+        "--",
+        "/app/wait-for-it.sh",
+        "redis:6379",
+        "--",
+        "node",
+        "dist/src/main.js",
+      ]
+    environment:
+      - DATABASE_URL=postgresql://root:secret@postgres13:5432/nodejs_midterm?schema=public
+      - RABBIT_URI=amqp://vy:vy@rabbitmq:5672
+      - REDIS_URL=redis://:secret@redis:6379
+    networks:
+      - backend-net
+
+  backend-api-2:
+    <<: *backend-api
+    container_name: backend-api-2
+
+  backend-api-3:
+    <<: *backend-api
+    container_name: backend-api-3
+
+  message-service:
+    build:
+      context: ./message-service
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    command:
+      ["/app/wait-for-it.sh", "rabbitmq:5672", "--", "bun", "run", "start"]
+    environment:
+      - RABBIT_URI=amqp://vy:vy@rabbitmq:5672
+    networks:
+      - backend-net
+
+  file-processing-service:
+    build:
+      context: ./file-processing
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - redis
+    command:
+      [
+        "/app/wait-for-it.sh",
+        "rabbitmq:5672",
+        "--",
+        "/app/wait-for-it.sh",
+        "redis:6379",
+        "--",
+        "bun",
+        "run",
+        "start",
+      ]
+    environment:
+      - RABBIT_URI=amqp://vy:vy@rabbitmq:5672
+      - REDIS_URL=redis://:secret@redis:6379
+    networks:
+      - backend-net
+
+  frontend-ui:
+    build:
+      context: ./frontend-ui
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8888/api
+        INTERNAL_API_URL: http://myloadbalancer/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - myloadbalancer
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8888/api
+      - INTERNAL_API_URL=http://myloadbalancer/api
+    networks:
+      - backend-net
 
 volumes:
   data-volume:
   redis-volume:
+
+networks:
+  backend-net:
+    driver: bridge

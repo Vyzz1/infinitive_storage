@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
-import getCookies from ".";
+import getCookies, { apiUrl } from ".";
 
 export const createFolder = async (name: string, parentId?: string | null) => {
   const cookie = await getCookies();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/folder`, {
+  const res = await fetch(`${apiUrl}/folder`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export const createFolder = async (name: string, parentId?: string | null) => {
 
 export const getRootFolder = async (): Promise<FolderDbItem[] | null> => {
   const cookie = await getCookies();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/folder/root`, {
+  const res = await fetch(`${apiUrl}/folder/root`, {
     method: "GET",
     next: {
       tags: ["folder"],
@@ -40,23 +40,43 @@ export const getFoldersInFolder = async (
 ): Promise<FolderDbItem[] | null> => {
   const cookie = await getCookies();
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/folder/parent/${folderId}`,
-    {
-      method: "GET",
-      next: {
-        tags: ["folder"],
-      },
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookie,
-      },
-      cache: "no-store",
-    }
-  );
+  const res = await fetch(`${apiUrl}/folder/parent/${folderId}`, {
+    method: "GET",
+    next: {
+      tags: ["folder"],
+    },
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookie,
+    },
+    cache: "no-store",
+  });
   if (!res.ok) {
     console.log("Failed to fetch folders");
     return null;
   }
+  return await res.json();
+};
+interface BreadcrumbResponse {
+  id: string;
+  name: string;
+}
+export const getFolderBreadcrumbs = async (
+  folderId: string
+): Promise<BreadcrumbResponse[] | null> => {
+  const cookie = await getCookies();
+  const res = await fetch(`${apiUrl}/folder/breadcrumbs/${folderId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookie,
+    },
+  });
+
+  if (!res.ok) {
+    console.log("Failed to fetch folder breadcrumbs");
+    return null;
+  }
+
   return await res.json();
 };
