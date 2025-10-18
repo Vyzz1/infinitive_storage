@@ -24,6 +24,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { signIn, signUp } from "@/app/actions/auth.action";
 
 interface AuthFormProps {
   authType: "sign-in" | "sign-up";
@@ -59,20 +60,7 @@ export default function AuthForm({ authType }: AuthFormProps) {
     setIsLoading(true);
     try {
       console.log("Sign in data:", data);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-          credentials: "include",
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to sign in");
-      }
-
+      await signIn(data.email, data.password);
       router.push("/home");
     } catch (error) {
       toast.error("Invalid email or password. Please try again.");
@@ -86,23 +74,7 @@ export default function AuthForm({ authType }: AuthFormProps) {
     setIsLoading(true);
     try {
       const { name, email, password } = data;
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-up`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name,
-            email,
-            password,
-          }),
-          credentials: "include",
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to sign up");
-      }
+      await signUp(email, password, name);
 
       router.push("/home");
     } catch (error) {

@@ -3,19 +3,45 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { SignUpDto } from './dto';
+import { RefreshTokenDto, SignUpDto } from './dto';
 import db from 'src/db';
 import { eq } from 'drizzle-orm';
-import { users } from 'src/db/schema';
+import { User, users } from 'src/db/schema';
 import { PasswordService } from '../password/password.service';
 import { QueueService } from 'src/queue/queue.service';
-
+import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from 'src/common/constants/jwt';
+import { v7 as uuidv7 } from 'uuid';
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly jwtService: JwtService,
     private readonly passwordService: PasswordService,
     private readonly queueService: QueueService,
   ) {}
+
+  private generateAccessToken(payload: Omit<User, 'password'>) {
+    return this.jwtService.sign(payload, {
+      secret: jwtConstants.access_secret as string,
+      expiresIn: '1h',
+      issuer: 'Infinite Storage',
+    });
+  }
+  private generateJwtToken(payload: Omit<User, 'password'>) {
+    const accessToken = this.generateAccessToken(payload);
+    const refreshToken = this.generateRefreshToken(payload);
+    return { accessToken, refreshToken };
+  }
+
+  private generateRefreshToken(payload: Omit<User, 'password'>) {
+    const jti = uuidv7();
+    return this.jwtService.sign(payload, {
+      secret: jwtConstants.refresh_secret as string,
+      expiresIn: '1d',
+      jwtid: jti,
+      issuer: 'Infinite Storage',
+    });
+  }
 
   async signIn(body: any) {
     const user = await db.query.users.findFirst({
@@ -32,7 +58,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
     const { password: _, ...rest } = user;
-    return rest;
+
+    const tokens = this.generateJwtToken(rest);
+    return {
+      tokens,
+      user: rest,
+    };
   }
 
   async signUp(request: SignUpDto) {
@@ -59,6 +90,11 @@ export class AuthService {
         id: users.id,
         name: users.name,
         email: users.email,
+        image: users.image,
+        dob: users.dob,
+        gender: users.gender,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
       });
 
     //TODO: send welcome email
@@ -68,6 +104,37 @@ export class AuthService {
       newUser.name,
     );
 
-    return newUser;
+    const tokens = this.generateJwtToken(newUser);
+
+    return {
+      tokens,
+      ...newUser,
+    };
+  }
+
+  async refreshToken(body: RefreshTokenDto) {
+    const { refreshToken } = body;
+
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: jwtConstants.refresh_secret,
+      });
+
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, payload.id),
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      const token = await this.generateAccessToken(user);
+
+      return {
+        accessToken: token,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
 }

@@ -1,4 +1,5 @@
 "use client";
+import { signOut } from "@/app/actions/auth.action";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -7,13 +8,7 @@ import React from "react";
 export default function Logout() {
   const router = useRouter();
   const handleLogout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sign-out`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    await signOut();
     router.refresh();
   };
 

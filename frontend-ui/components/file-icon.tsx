@@ -25,8 +25,6 @@ export function FileIcon({ file, className = "h-5 w-5" }: FileIconProps) {
   const iconClass = className;
   const isCodeFile = codeEtxs.includes(file.extension.toLowerCase());
 
-  console.log("FileIcon -> file:", file);
-
   if (isCodeFile) {
     const icon =
       iconMap[file.extension.toLowerCase()] || file.extension.toLowerCase();
