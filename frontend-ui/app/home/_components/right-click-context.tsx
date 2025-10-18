@@ -42,7 +42,7 @@ export default function RightClickContext() {
 
       <ContextMenuContent
         onContextMenu={(e) => e.preventDefault()}
-        className="w-52 "
+        className="w-52 pointer-events-none"
       >
         <ContextMenuItem
           onClick={() => {

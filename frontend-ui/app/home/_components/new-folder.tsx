@@ -62,11 +62,16 @@ export default function NewFolder() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent
+        className="pointer-events-none"
+        onContextMenu={(e) => {
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Create a new folder</DialogTitle>
         </DialogHeader>
-        <div className="p-4">
+        <div className="p-4 pointer-events-none" contextMenu="return false;">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormField

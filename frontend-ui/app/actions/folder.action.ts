@@ -1,15 +1,13 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
-import getCookies, { apiUrl } from ".";
+import apiFetch from ".";
 
 export const createFolder = async (name: string, parentId?: string | null) => {
-  const cookie = await getCookies();
-  const res = await fetch(`${apiUrl}/folder`, {
+  const res = await apiFetch(`/folder`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Cookie: cookie,
     },
     body: JSON.stringify({ name, parentId }),
     cache: "no-store",
@@ -19,15 +17,13 @@ export const createFolder = async (name: string, parentId?: string | null) => {
 };
 
 export const getRootFolder = async (): Promise<FolderDbItem[] | null> => {
-  const cookie = await getCookies();
-  const res = await fetch(`${apiUrl}/folder/root`, {
+  const res = await apiFetch(`/folder/root`, {
     method: "GET",
     next: {
       tags: ["folder"],
     },
     headers: {
       "Content-Type": "application/json",
-      Cookie: cookie,
     },
     cache: "no-store",
   });
@@ -38,16 +34,13 @@ export const getRootFolder = async (): Promise<FolderDbItem[] | null> => {
 export const getFoldersInFolder = async (
   folderId: string
 ): Promise<FolderDbItem[] | null> => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/folder/parent/${folderId}`, {
+  const res = await apiFetch(`/folder/parent/${folderId}`, {
     method: "GET",
     next: {
       tags: ["folder"],
     },
     headers: {
       "Content-Type": "application/json",
-      Cookie: cookie,
     },
     cache: "no-store",
   });
@@ -64,12 +57,10 @@ interface BreadcrumbResponse {
 export const getFolderBreadcrumbs = async (
   folderId: string
 ): Promise<BreadcrumbResponse[] | null> => {
-  const cookie = await getCookies();
-  const res = await fetch(`${apiUrl}/folder/breadcrumbs/${folderId}`, {
+  const res = await apiFetch(`/folder/breadcrumbs/${folderId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Cookie: cookie,
     },
   });
 

@@ -15,3 +15,12 @@ export class SignUpDto {
   })
   name: string;
 }
+
+export class RefreshTokenDto {
+  @IsString()
+  @MinLength(500, {
+    message:
+      'Refresh token is too short. Minimum length is $constraint1 characters',
+  })
+  refreshToken: string;
+}
