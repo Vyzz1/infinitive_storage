@@ -49,7 +49,12 @@ export function UploadPopup() {
   const uploadingCount = activeUploads.length;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[380px] shadow-2xl rounded-lg border border-border bg-card overflow-hidden">
+    <div
+      onContextMenu={(e) => {
+        e.preventDefault();
+      }}
+      className="fixed bottom-6 right-6 z-50 w-[380px] shadow-2xl rounded-lg border border-border bg-card overflow-hidden"
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
         <div className="flex items-center gap-2">

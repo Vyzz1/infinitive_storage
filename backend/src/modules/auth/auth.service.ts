@@ -23,7 +23,7 @@ export class AuthService {
   private generateAccessToken(payload: Omit<User, 'password'>) {
     return this.jwtService.sign(payload, {
       secret: jwtConstants.access_secret as string,
-      expiresIn: '1h',
+      expiresIn: '2h',
       issuer: 'Infinite Storage',
     });
   }

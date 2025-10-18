@@ -45,4 +45,3 @@ COPY .env .env
 
 CMD [ "./start.sh" ]
 
-
