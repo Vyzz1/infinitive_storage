@@ -1,13 +1,22 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto';
+import { RefreshTokenDto, SignUpDto } from './dto';
 import { Public } from 'src/common/decorators/public/public.decorator';
 import { type Request, type Response } from 'express';
-@Public()
+import { User } from 'src/common/decorators/user/user.decorator';
+import { AuthGuard } from 'src/common/guards/auth/auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
+  @Public()
   @Post('sign-up')
   async signUp(
     @Body() body: SignUpDto,
@@ -15,27 +24,18 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const newUser = await this.authService.signUp(body);
-    req.session.user = {
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-      username: newUser.name.split(' ').join('').toLowerCase(),
-    };
+
     return res.status(201).json(newUser);
   }
-
+  @Public()
   @Post('sign-in')
   async signIn(@Req() req: Request, @Res() res: Response) {
     const data = await this.authService.signIn(req.body);
-    req.session.user = {
-      id: data.id,
-      name: data.name,
-      email: data.email,
-      username: data.name.split(' ').join('').toLowerCase(),
-    };
+
     return res.status(200).json(data);
   }
 
+  @Public()
   @Post('sign-out')
   async signOut(@Req() req: Request, @Res() res: Response) {
     req.session.destroy((err) => {
@@ -47,8 +47,16 @@ export class AuthController {
     });
   }
 
+  @UseGuards(AuthGuard)
   @Get('me')
-  async getCurrentUser(@Req() req: Request) {
-    return req.session.user || null;
+  async getCurrentUser(@User() user) {
+    console.log('Current user data:', user);
+    return user;
+  }
+
+  @Public()
+  @Post('refresh')
+  async refreshToken(@Body() body: RefreshTokenDto) {
+    return this.authService.refreshToken(body);
   }
 }

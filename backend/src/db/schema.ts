@@ -22,6 +22,8 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
+export type User = typeof users.$inferSelect;
+
 // Sessions table
 export const sessions = pgTable(
   'sessions',

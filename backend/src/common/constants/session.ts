@@ -5,7 +5,7 @@ export const sessionConstants = {
   cookie: {
     maxAge: 1000 * 60 * 60,
     httpOnly: true,
-    sameSite: 'lax' as 'none' | 'lax' | 'strict',
-    secure: false,
+    sameSite: 'none' as 'none' | 'lax' | 'strict',
+    secure: process.env.NODE_ENV === 'production',
   },
 };

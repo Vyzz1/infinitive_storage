@@ -1,21 +1,14 @@
 "use server";
 import { cookies } from "next/headers";
-import { apiUrl } from ".";
+import apiFetch from ".";
+import { apiUrl } from "@/constants/api";
+import { redirect } from "next/navigation";
 
 export async function getCurrentUser() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get("connect.sid");
-
-  if (!sessionCookie) {
-    console.log("No session cookie found");
-    return null;
-  }
-
-  const res = await fetch(`${apiUrl}/auth/me`, {
+  const res = await apiFetch(`/auth/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Cookie: `connect.sid=${sessionCookie.value}`, 
     },
     cache: "no-store",
   });
@@ -34,6 +27,85 @@ export async function getCurrentUser() {
     console.warn("Response not JSON or empty", error);
   }
 
-  console.log("Current user data:", data);
   return data;
+}
+
+export async function signIn(email: string, password: string) {
+  const res = await fetch(`${apiUrl}/auth/sign-in`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error("Sign-in failed");
+  }
+  const cookieStore = await cookies();
+
+  const body = await res.json();
+
+  const accessToken = body.tokens.accessToken;
+
+  const refreshToken = body.tokens.refreshToken;
+
+  cookieStore.set("accessToken", accessToken, {
+    httpOnly: true,
+  });
+  cookieStore.set("refreshToken", refreshToken, {
+    httpOnly: true,
+  });
+
+  return body;
+}
+
+export async function signUp(email: string, password: string, name: string) {
+  const res = await fetch(`${apiUrl}/auth/sign-up`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password, name }),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error("Sign-up failed");
+  }
+  const cookieStore = await cookies();
+
+  const body = await res.json();
+
+  const accessToken = body.tokens.accessToken;
+
+  const refreshToken = body.tokens.refreshToken;
+
+  cookieStore.set("accessToken", accessToken, {
+    httpOnly: true,
+  });
+  cookieStore.set("refreshToken", refreshToken, {
+    httpOnly: true,
+  });
+
+  return body;
+}
+
+export async function signOut() {
+  const res = await fetch(`${apiUrl}/auth/sign-out`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error("Sign-out failed");
+  }
+  const cookieStore = await cookies();
+
+  cookieStore.delete("accessToken");
+  cookieStore.delete("refreshToken");
+
+  redirect("/sign-in");
 }

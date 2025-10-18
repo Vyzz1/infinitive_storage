@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import axios, { AxiosError, CancelTokenSource } from "axios";
+import { getTokenForClient } from "@/app/actions";
 
 export interface UploadItem {
   id: string;
@@ -48,11 +49,16 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       formData.append("files", file);
       if (folderId) formData.append("folderId", folderId);
 
+      const accessToken = await getTokenForClient();
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/upload`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${accessToken}`,
+          },
           cancelToken: source.token,
 
           onUploadProgress: (event) => {

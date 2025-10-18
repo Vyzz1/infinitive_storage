@@ -37,6 +37,10 @@ RUN apk add --no-cache dos2unix bash \
     && chmod +x /app/wait-for-it.sh \
     && apk del dos2unix
 
+RUN apk add --no-cache dos2unix bash \
+    && dos2unix /app/start.sh \
+    && chmod +x /app/start.sh \
+    && apk del dos2unix
 COPY .env .env
 
 CMD [ "./start.sh" ]
