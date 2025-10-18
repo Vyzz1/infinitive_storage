@@ -43,6 +43,7 @@ const apiFetch = async (url: string, options: RequestInit = {}) => {
       console.log("Token refreshed successfully");
       const data = await res.json();
       const newAccessToken = data.accessToken;
+
       await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/token`, {
         method: "POST",
         headers: {
@@ -50,6 +51,7 @@ const apiFetch = async (url: string, options: RequestInit = {}) => {
         },
         body: JSON.stringify({ accessToken: newAccessToken }),
       });
+
       res = await fetch(`${apiUrl}${url}`, {
         ...options,
         headers: {

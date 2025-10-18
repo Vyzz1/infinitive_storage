@@ -1,0 +1,38 @@
+# k8s/file-processing-service/file-processing-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-processing-service
+  namespace: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-processing
+  template:
+    metadata:
+      labels:
+        app: file-processing
+    spec:
+      containers:
+        - name: file-processing
+          image: vykhanghuynh/file-processing-service
+          env:
+            - name: RABBIT_URI
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: RABBIT_URI
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: file-processing-service
+  namespace: backend
+spec:
+  selector:
+    app: file-processing
+  ports:
+    - port: 3002
+  type: ClusterIP

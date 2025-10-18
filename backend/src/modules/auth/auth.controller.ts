@@ -38,19 +38,14 @@ export class AuthController {
   @Public()
   @Post('sign-out')
   async signOut(@Req() req: Request, @Res() res: Response) {
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Could not sign out.' });
-      }
-      res.clearCookie('connect.sid');
-      return res.status(200).json({ message: 'Signed out successfully.' });
-    });
+    return {
+      message: 'Sign-out successful',
+    };
   }
 
   @UseGuards(AuthGuard)
   @Get('me')
   async getCurrentUser(@User() user) {
-    console.log('Current user data:', user);
     return user;
   }
 
