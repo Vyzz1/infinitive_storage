@@ -2,6 +2,7 @@ import { getFilesInFolder } from "@/app/actions/file.action";
 import {
   getFolderBreadcrumbs,
   getFoldersInFolder,
+  getAllFolders, 
 } from "@/app/actions/folder.action";
 import ViewSwitcher from "../../_components/view-swticher";
 import EmptyState from "@/components/empty-state";
@@ -14,21 +15,27 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  const files = await getFilesInFolder(id);
-  const folders = await getFoldersInFolder(id);
-  const breadcrumbs = await getFolderBreadcrumbs(id);
+  const [files, folders, breadcrumbs, allFolders] = await Promise.all([
+    getFilesInFolder(id),
+    getFoldersInFolder(id),
+    getFolderBreadcrumbs(id),
+    getAllFolders(), 
+  ]);
 
-  console.log(files);
   const isEmpty = files?.length === 0 && folders?.length === 0;
 
   return (
     <section className="min-h-screen bg-background">
-      {<FolderBreadcums folders={breadcrumbs || []} />}
+      <FolderBreadcums folders={breadcrumbs || []} />
 
       {isEmpty ? (
         <EmptyState />
       ) : (
-        <ViewSwitcher folders={folders} files={files} />
+        <ViewSwitcher 
+          folders={folders} 
+          files={files}
+          allFolders={allFolders} 
+        />
       )}
     </section>
   );

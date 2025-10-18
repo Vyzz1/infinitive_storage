@@ -1,3 +1,5 @@
+"use client";
+
 import { Home, FolderOpen, Clock, FileText } from "lucide-react";
 import {
   Sidebar,
@@ -11,6 +13,8 @@ import {
 } from "@/components/ui/sidebar";
 import ActionButton from "./action-button";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const navigationItems = [
   {
@@ -21,26 +25,28 @@ const navigationItems = [
   {
     title: "My Drive",
     icon: FolderOpen,
-    url: "/drive",
+    url: "/home/drive",
   },
   {
     title: "Recent Files",
     icon: Clock,
-    url: "/recent",
+    url: "/home/recent",
   },
   {
     title: "Documents",
     icon: FileText,
-    url: "/documents",
+    url: "/home/documents",
   },
 ];
 
 export function AppSidebar() {
+  const pathname = usePathname();
+
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-1">
-          <div className="flex size-12 items-center justify-center rounded-lg  text-primary-foreground">
+          <div className="flex size-12 items-center justify-center rounded-lg text-primary-foreground">
             <Image src="/favicon.ico" alt="Logo" width={48} height={48} />
           </div>
           <div className="flex flex-col">
@@ -57,16 +63,19 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span className="text-base">{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {navigationItems.map((item) => {
+                const isActive = pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild tooltip={item.title} isActive={isActive}>
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span className="text-base">{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

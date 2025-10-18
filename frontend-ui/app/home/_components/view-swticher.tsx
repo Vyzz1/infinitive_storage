@@ -6,8 +6,19 @@ import { DriveTable } from "./drive-list";
 import { Button } from "@/components/ui/button";
 import { Grid, List } from "lucide-react";
 
-export default function ViewSwitcher({ folders, files }: any) {
+interface ViewSwitcherProps {
+  folders: any;
+  files: any;
+  allFolders: FolderDbItem[]; 
+}
+
+export default function ViewSwitcher({ folders, files, allFolders }: ViewSwitcherProps) {
   const { view, setView } = useViewStore();
+
+  console.log("🔀 ViewSwitcher:", {
+    displayFolders: folders?.length || 0,
+    allFolders: allFolders?.length || 0, 
+  });
 
   return (
     <div className="py-6">
@@ -29,9 +40,17 @@ export default function ViewSwitcher({ folders, files }: any) {
       </div>
 
       {view === "grid" ? (
-        <DriveGrid folders={folders} files={files} />
+        <DriveGrid 
+          folders={folders} 
+          files={files}
+          allFolders={allFolders} 
+        />
       ) : (
-        <DriveTable folders={folders} files={files} />
+        <DriveTable 
+          folders={folders} 
+          files={files}
+          allFolders={allFolders} 
+        />
       )}
     </div>
   );

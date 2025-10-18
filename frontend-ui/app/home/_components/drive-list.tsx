@@ -1,11 +1,13 @@
 import FolderItem from "./folder-item";
 import FileItem from "./file-item";
+
 interface DriveTableProps {
   folders: FolderDbItem[];
   files: FileDbItem[];
+  allFolders: FolderDbItem[]; 
 }
 
-export function DriveTable({ folders, files }: DriveTableProps) {
+export function DriveTable({ folders, files, allFolders }: DriveTableProps) { 
   return (
     <div className="w-full">
       <div className="grid grid-cols-4 gap-4 border-b border-border px-6 py-3 text-sm font-medium text-muted-foreground">
@@ -25,11 +27,19 @@ export function DriveTable({ folders, files }: DriveTableProps) {
       </div>
 
       {folders.map((folder) => (
-        <FolderItem key={folder.id} folder={folder} />
+        <FolderItem 
+          key={folder.id} 
+          folder={folder}
+          folders={allFolders} 
+        />
       ))}
 
       {files.map((file) => (
-        <FileItem key={file.id} file={file} />
+        <FileItem 
+          key={file.id} 
+          file={file}
+          folders={allFolders}
+        />
       ))}
     </div>
   );
