@@ -15,7 +15,7 @@ export async function getCurrentUser() {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Cookie: `connect.sid=${sessionCookie.value}`, // Fixed cookie format
+      Cookie: `connect.sid=${sessionCookie.value}`, 
     },
     cache: "no-store",
   });
