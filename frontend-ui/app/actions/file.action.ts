@@ -8,7 +8,6 @@ export const getRootFile = async (): Promise<FileDbItem[] | null> => {
     next: {
       tags: ["file"],
     },
-
     cache: "no-store",
   });
 
@@ -27,7 +26,6 @@ export const getFilesInFolder = async (
     next: {
       tags: ["file"],
     },
-
     cache: "no-store",
   });
 
@@ -40,14 +38,8 @@ export const getFilesInFolder = async (
 };
 
 export const deleteFile = async (fileId: string) => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/file/${fileId}`, {
+  const res = await apiFetch(`/file/${fileId}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
   });
 
   if (!res.ok) {
@@ -59,14 +51,8 @@ export const deleteFile = async (fileId: string) => {
 };
 
 export const renameFile = async (fileId: string, newName: string) => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/file/${fileId}`, {
+  const res = await apiFetch(`/file/${fileId}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
     body: JSON.stringify({ fileName: newName }),
   });
 
@@ -79,14 +65,8 @@ export const renameFile = async (fileId: string, newName: string) => {
 };
 
 export const getFileById = async (fileId: string): Promise<FileDbItem | null> => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/file/${fileId}`, {
+  const res = await apiFetch(`/file/${fileId}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
   });
 
   if (!res.ok) {
@@ -97,14 +77,8 @@ export const getFileById = async (fileId: string): Promise<FileDbItem | null> =>
 };
 
 export const searchFiles = async (query: string): Promise<FileDbItem[]> => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/file?search=${encodeURIComponent(query)}`, {
+  const res = await apiFetch(`/file?search=${encodeURIComponent(query)}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
     cache: "no-store",
   });
 
@@ -123,8 +97,6 @@ export const getFilesWithFilters = async (params: {
   sortOrder?: "asc" | "desc";
   folderId?: string;
 }): Promise<{ content: FileDbItem[] }> => {
-  const cookie = await getCookies();
-
   const queryParams = new URLSearchParams();
   if (params.search) queryParams.append("search", params.search);
   if (params.type) queryParams.append("type", params.type);
@@ -132,12 +104,8 @@ export const getFilesWithFilters = async (params: {
   if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
   if (params.folderId) queryParams.append("folderId", params.folderId);
 
-  const res = await fetch(`${apiUrl}/file?${queryParams.toString()}`, {
+  const res = await apiFetch(`/file?${queryParams.toString()}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
     cache: "no-store",
   });
 
@@ -148,19 +116,11 @@ export const getFilesWithFilters = async (params: {
   return await res.json();
 };
 
-
-
 export const moveFileToFolder = async (fileId: string, targetFolderId: string | null) => {
-  const cookie = await getCookies();
-
   if (targetFolderId === null) {
-    const res = await fetch(`${apiUrl}/file/${fileId}`, {
+    const res = await apiFetch(`/file/${fileId}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookie,
-      },
-      body: JSON.stringify({ folderId: null }), 
+      body: JSON.stringify({ folderId: null }),
     });
 
     if (!res.ok) {
@@ -173,12 +133,8 @@ export const moveFileToFolder = async (fileId: string, targetFolderId: string | 
     return await res.json();
   }
 
-  const res = await fetch(`${apiUrl}/file/${fileId}/move`, {
+  const res = await apiFetch(`/file/${fileId}/move`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
     body: JSON.stringify({ targetFolderId }),
   });
 
@@ -192,17 +148,9 @@ export const moveFileToFolder = async (fileId: string, targetFolderId: string | 
   return await res.json();
 };
 
-
-
 export const getRecentFiles = async (): Promise<FileDbItem[]> => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/file?sortBy=updatedAt&sortOrder=desc&limit=20`, {
+  const res = await apiFetch(`/file?sortBy=updatedAt&sortOrder=desc&limit=20`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
     cache: "no-store",
   });
 
@@ -215,18 +163,12 @@ export const getRecentFiles = async (): Promise<FileDbItem[]> => {
 };
 
 export const getDocumentFiles = async (): Promise<FileDbItem[]> => {
-  const cookie = await getCookies();
-
   const documentTypes = ["pdf", "document"];
   const results: FileDbItem[] = [];
 
   for (const type of documentTypes) {
-    const res = await fetch(`${apiUrl}/file?type=${type}`, {
+    const res = await apiFetch(`/file?type=${type}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookie,
-      },
       cache: "no-store",
     });
 
