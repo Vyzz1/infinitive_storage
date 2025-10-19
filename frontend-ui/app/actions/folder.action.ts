@@ -74,16 +74,9 @@ export const getFolderBreadcrumbs = async (
   return await res.json();
 };
 
-// Delete folder
 export const deleteFolder = async (folderId: string) => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/folder/${folderId}`, {
+  const res = await apiFetch(`/folder/${folderId}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
   });
 
   if (!res.ok) {
@@ -96,14 +89,8 @@ export const deleteFolder = async (folderId: string) => {
 };
 
 export const renameFolder = async (folderId: string, newName: string) => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/folder/${folderId}`, {
+  const res = await apiFetch(`/folder/${folderId}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
     body: JSON.stringify({ name: newName }),
   });
 
@@ -116,19 +103,10 @@ export const renameFolder = async (folderId: string, newName: string) => {
 };
 
 export const searchFolders = async (query: string): Promise<FolderDbItem[]> => {
-  const cookie = await getCookies();
-
-  const res = await fetch(
-    `${apiUrl}/folder?search=${encodeURIComponent(query)}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookie,
-      },
-      cache: "no-store",
-    }
-  );
+  const res = await apiFetch(`/folder?search=${encodeURIComponent(query)}`, {
+    method: "GET",
+    cache: "no-store",
+  });
 
   if (!res.ok) {
     return [];
@@ -138,20 +116,13 @@ export const searchFolders = async (query: string): Promise<FolderDbItem[]> => {
   return data.content || [];
 };
 
-
 export const moveFolderToFolder = async (
   folderId: string,
   targetParentId: string | null
 ) => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/folder/${folderId}/move`, {
+  const res = await apiFetch(`/folder/${folderId}/move`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
-    body: JSON.stringify({ targetParentId }), 
+    body: JSON.stringify({ targetParentId }),
   });
 
   if (!res.ok) {
@@ -165,14 +136,8 @@ export const moveFolderToFolder = async (
 };
 
 export const getAllFolders = async (): Promise<FolderDbItem[]> => {
-  const cookie = await getCookies();
-
-  const res = await fetch(`${apiUrl}/folder`, {
+  const res = await apiFetch(`/folder`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
     cache: "no-store",
   });
 
@@ -183,4 +148,43 @@ export const getAllFolders = async (): Promise<FolderDbItem[]> => {
 
   const data = await res.json();
   return data.content || data || [];
+};
+
+export const getFolderSize = async (folderId: string): Promise<number> => {
+  try {
+    const filesRes = await apiFetch(`/file/folder/${folderId}`, {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    if (!filesRes.ok) {
+      return 0;
+    }
+
+    const files: FileDbItem[] = await filesRes.json();
+    
+    let totalSize = 0;
+    files.forEach(file => {
+      totalSize += file.size || 0;
+    });
+
+    const subfoldersRes = await apiFetch(`/folder/parent/${folderId}`, {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    if (subfoldersRes.ok) {
+      const subfolders: FolderDbItem[] = await subfoldersRes.json();
+      
+      for (const subfolder of subfolders) {
+        const subfolderSize = await getFolderSize(subfolder.id);
+        totalSize += subfolderSize;
+      }
+    }
+
+    return totalSize;
+  } catch (error) {
+    console.error("Error calculating folder size:", error);
+    return 0;
+  }
 };

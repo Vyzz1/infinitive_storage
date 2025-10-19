@@ -1,12 +1,9 @@
 "use server";
 import { cookies } from "next/headers";
 import apiFetch from ".";
+import { apiUrl } from "@/constants/api";
 import { redirect } from "next/navigation";
 
-const apiUrl =
-  process.env.INTERNAL_API_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8888/api";
 export async function getCurrentUser() {
   const res = await apiFetch(`/auth/me`, {
     method: "GET",
@@ -34,8 +31,6 @@ export async function getCurrentUser() {
 }
 
 export async function signIn(email: string, password: string) {
-  console.log(`${apiUrl}/auth/sign-in`);
-
   const res = await fetch(`${apiUrl}/auth/sign-in`, {
     method: "POST",
     headers: {
@@ -66,8 +61,6 @@ export async function signIn(email: string, password: string) {
 }
 
 export async function signUp(email: string, password: string, name: string) {
-  console.log(`${apiUrl}/auth/sign-up`);
-
   const res = await fetch(`${apiUrl}/auth/sign-up`, {
     method: "POST",
     headers: {
@@ -98,6 +91,17 @@ export async function signUp(email: string, password: string, name: string) {
 }
 
 export async function signOut() {
+  const res = await fetch(`${apiUrl}/auth/sign-out`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error("Sign-out failed");
+  }
   const cookieStore = await cookies();
 
   cookieStore.delete("accessToken");
@@ -105,4 +109,3 @@ export async function signOut() {
 
   redirect("/sign-in");
 }
-

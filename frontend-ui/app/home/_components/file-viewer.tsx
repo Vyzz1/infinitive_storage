@@ -42,12 +42,11 @@ export function FileViewer({ open, onOpenChange, file }: FileViewerProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl h-[85vh] p-0 gap-0 flex flex-col">
+      <DialogContent className="!max-w-[90vw] !w-full h-[85vh] p-0 gap-0 flex flex-col">
         <VisuallyHidden>
           <DialogTitle>{file.fileName}</DialogTitle>
         </VisuallyHidden>
 
-        {/* Header */}
         <div className="flex items-center justify-between p-4 pr-12 border-b shrink-0">
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-semibold truncate">{file.fileName}</h2>
