@@ -28,13 +28,18 @@ import { RenameDialog } from "./rename-dialog";
 import { FileViewer } from "./file-viewer";
 import { FileDetailsDialog } from "./file-details-dialog";
 import { MoveToFolderDialog } from "./move-to-folder-dialog";
-import { deleteFile, renameFile, invalidateTag,moveFileToFolder } from "@/app/actions/file.action";
+import {
+  deleteFile,
+  renameFile,
+  invalidateTag,
+  moveFileToFolder,
+} from "@/app/actions/file.action";
 import { toast } from "sonner";
 
-export default function FileItem({ 
-  file, 
-  folders 
-}: { 
+export default function FileItem({
+  file,
+  folders,
+}: {
   file: FileDbItem;
   folders: FolderDbItem[];
 }) {
@@ -80,8 +85,8 @@ export default function FileItem({
 
   const handleDownload = async () => {
     fetch(file.url)
-      .then(res => res.blob())
-      .then(blob => {
+      .then((res) => res.blob())
+      .then((blob) => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -94,30 +99,30 @@ export default function FileItem({
       .catch(() => {
         window.open(file.url, "_blank");
       });
-    
+
     toast.success("Download started!");
   };
 
   const handleMove = async (targetFolderId: string | null) => {
-  setIsLoading(true);
-  try {
-    await moveFileToFolder(file.id, targetFolderId);
-    
-    toast.success("File moved successfully");
-    setIsMoveDialogOpen(false);
-    await invalidateTag("file");
-  } catch (error: any) {
-    toast.error(error.message || "Failed to move file");
-    console.error(error);
-    throw error;
-  } finally {
-    setIsLoading(false);
-  }
-};
+    setIsLoading(true);
+    try {
+      await moveFileToFolder(file.id, targetFolderId);
+
+      toast.success("File moved successfully");
+      setIsMoveDialogOpen(false);
+      await invalidateTag("file");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to move file");
+      console.error(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDoubleClick = () => {
     sessionStorage.setItem(`file_${file.id}`, JSON.stringify(file));
-    window.open(`/preview/${file.id}`, '_blank');
+    window.open(`/preview/${file.id}`, "_blank");
   };
 
   const handlePreview = () => {
@@ -144,7 +149,9 @@ export default function FileItem({
         <div className="flex items-center text-muted-foreground">
           {file.updatedAt
             ? formatDistanceToNow(new Date(file.updatedAt), { addSuffix: true })
-            : formatDistanceToNow(new Date(file.createdAt), { addSuffix: true })}
+            : formatDistanceToNow(new Date(file.createdAt), {
+                addSuffix: true,
+              })}
         </div>
 
         <div className="flex items-center text-muted-foreground">

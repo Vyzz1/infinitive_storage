@@ -18,9 +18,9 @@ export default function PreviewPage() {
   useEffect(() => {
     if (fileId) {
       setIsLoading(true);
-      
+
       const storedFile = sessionStorage.getItem(`file_${fileId}`);
-      
+
       if (storedFile) {
         try {
           const fileData = JSON.parse(storedFile);
@@ -29,7 +29,7 @@ export default function PreviewPage() {
           console.error("Failed to parse file data:", error);
         }
       }
-      
+
       setIsLoading(false);
     }
   }, [fileId]);
@@ -52,12 +52,13 @@ export default function PreviewPage() {
           <div className="text-6xl">😕</div>
           <h1 className="text-2xl font-bold">File Not Found</h1>
           <p className="text-muted-foreground">
-            The file you're looking for doesn't exist or the preview link has expired.
+            The file you&apos;re looking for doesn&apos;t exist or the preview
+            link has expired.
           </p>
           <p className="text-sm text-muted-foreground">
             Please go back to home and double-click the file again to preview.
           </p>
-          <Button onClick={() => router.push('/home')}>
+          <Button onClick={() => router.push("/home")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Button>
@@ -71,8 +72,8 @@ export default function PreviewPage() {
 
   const handleDownload = () => {
     fetch(file.url)
-      .then(res => res.blob())
-      .then(blob => {
+      .then((res) => res.blob())
+      .then((blob) => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -92,17 +93,16 @@ export default function PreviewPage() {
       <header className="border-b bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4 flex-1 min-w-0">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => router.back()}
-            >
+            <Button variant="ghost" size="icon" onClick={() => router.back()}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-lg font-semibold truncate">{file.fileName}</h1>
+              <h1 className="text-lg font-semibold truncate">
+                {file.fileName}
+              </h1>
               <p className="text-sm text-muted-foreground">
-                {formatFileSize(file.size)} • {file.extension.toUpperCase()} • {file.type}
+                {formatFileSize(file.size)} • {file.extension.toUpperCase()} •{" "}
+                {file.type}
               </p>
             </div>
           </div>

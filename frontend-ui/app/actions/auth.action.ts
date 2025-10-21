@@ -91,21 +91,14 @@ export async function signUp(email: string, password: string, name: string) {
 }
 
 export async function signOut() {
-  const res = await fetch(`${apiUrl}/auth/sign-out`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error("Sign-out failed");
-  }
+  console.log("Signing out user...");
+
   const cookieStore = await cookies();
 
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
+
+  console.log("User signed out, redirecting to sign-in page");
 
   redirect("/sign-in");
 }

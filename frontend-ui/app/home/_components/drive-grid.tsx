@@ -8,31 +8,22 @@ interface DriveGridProps {
   allFolders: FolderDbItem[];
 }
 
-export default function DriveGrid({ folders, files, allFolders }: DriveGridProps) {
-  console.log("🎨 DriveGrid:", {
-    displayFolders: folders?.length || 0,
-    allFolders: allFolders?.length || 0,
-  });
-
+export default function DriveGrid({
+  folders,
+  files,
+  allFolders,
+}: DriveGridProps) {
   return (
     <div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-6">
         {folders?.map((folder) => (
-          <FolderBig 
-            key={folder.id} 
-            folder={folder}
-            folders={allFolders} 
-          />
+          <FolderBig key={folder.id} folder={folder} folders={allFolders} />
         ))}
       </div>
 
       <div className="mt-10 px-6 gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {files?.map((file) => (
-          <FileThumb 
-            key={file.id} 
-            file={file}
-            folders={allFolders} 
-          />
+          <FileThumb key={file.id} file={file} folders={allFolders} />
         ))}
       </div>
     </div>

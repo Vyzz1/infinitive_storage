@@ -1,10 +1,9 @@
 "use client";
 
 import { FolderIcon } from "@/components/folder-icon";
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { formatFileSize } from "@/lib/utils";
-import { MoreVertical, Trash2, Edit, FolderOpen } from "lucide-react";
+import { MoreVertical, Trash2, Edit, FolderOpen, Palette } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,98 +14,64 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useFolderOperations } from "../_hooks/useFolderOperations";
-import { useDragAndDrop } from "../_hooks/useDragAndDrop";
 import { DeleteDialog } from "./delete-dialog";
 import { RenameDialog } from "./rename-dialog";
-import { MoveToFolderDialog } from "./move-to-folder-dialog"; 
-import { moveFileToFolder } from "@/app/actions/file.action";
+import { MoveToFolderDialog } from "./move-to-folder-dialog";
+import { ColorPickerDialog } from "./color-picker-dialog";
 import { moveFolderToFolder } from "@/app/actions/folder.action";
 import { invalidateTag } from "@/app/actions/file.action";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 
 interface FolderItemProps {
   folder: FolderDbItem;
-  folders: FolderDbItem[]; 
+  folders: FolderDbItem[];
 }
 
-export default function FolderItem({ 
-  folder,
-  folders 
-}: FolderItemProps) {
+export default function FolderItem({ folder, folders }: FolderItemProps) {
   const router = useRouter();
-  const [isDropTarget, setIsDropTarget] = useState(false);
-  const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false); 
+  const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false);
 
   const {
     selectedFolder,
     isDeleteDialogOpen,
     isRenameDialogOpen,
+    isColorPickerOpen,
     isLoading,
     setIsDeleteDialogOpen,
     setIsRenameDialogOpen,
+    setIsColorPickerOpen,
     handleDelete,
     handleRename,
+    handleColorChange,
     openDeleteDialog,
     openRenameDialog,
+    openColorPicker,
   } = useFolderOperations();
-
-  const handleMoveItem = async (
-    itemId: string,
-    itemType: "file" | "folder",
-    targetFolderId: string
-  ) => {
-    if (itemType === "file") {
-      await moveFileToFolder(itemId, targetFolderId);
-    } else {
-      await moveFolderToFolder(itemId, targetFolderId);
-    }
-    await invalidateTag("file");
-    await invalidateTag("folder");
-  };
-
-  const { handleDragStart, handleDragEnd, handleDragOver, handleDrop } =
-    useDragAndDrop(handleMoveItem);
 
   const handleOpen = () => {
     router.push(`/home/folder/${folder.id}`);
   };
 
   const handleMove = async (targetFolderId: string | null) => {
-  try {
-    await moveFolderToFolder(folder.id, targetFolderId);
-    
-    toast.success("Folder moved successfully");
-    setIsMoveDialogOpen(false);
-    await invalidateTag("folder");
-  } catch (error: any) {
-    toast.error(error.message || "Failed to move folder");
-    console.error(error);
-    throw error;
-  }
-};
+    try {
+      await moveFolderToFolder(folder.id, targetFolderId);
+
+      toast.success("Folder moved successfully");
+      setIsMoveDialogOpen(false);
+      await invalidateTag("folder");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to move folder");
+      console.error(error);
+      throw error;
+    }
+  };
 
   return (
     <>
       <div
         key={folder.id}
-        className={`grid grid-cols-4 gap-4 border-b border-border px-6 py-3 text-sm hover:bg-muted/50 transition-colors cursor-move ${
-          isDropTarget ? "ring-2 ring-primary bg-primary/10" : ""
-        }`}
+        className={`grid grid-cols-4 gap-4 border-b border-border px-6 py-3 text-sm hover:bg-muted/50 transition-colors cursor-pointer `}
         onDoubleClick={handleOpen}
-        draggable
-        onDragStart={(e) =>
-          handleDragStart({ id: folder.id, type: "folder", name: folder.name }, e)
-        }
-        onDragEnd={handleDragEnd}
-        onDragOver={(e) => {
-          handleDragOver(e);
-          setIsDropTarget(true);
-        }}
-        onDragLeave={() => setIsDropTarget(false)}
-        onDrop={(e) => {
-          handleDrop(folder.id)(e);
-          setIsDropTarget(false);
-        }}
       >
         <div className="flex items-center gap-3">
           <FolderIcon folder={folder} />
@@ -133,16 +98,16 @@ export default function FolderItem({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleOpen}>
-                <FolderOpen className="mr-2 h-4 w-4" />
-                Open
-              </DropdownMenuItem>
-
               <DropdownMenuSeparator />
 
               <DropdownMenuItem onClick={() => openRenameDialog(folder)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Rename
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={() => openColorPicker(folder)}>
+                <Palette className="mr-2 h-4 w-4" />
+                Change Color
               </DropdownMenuItem>
 
               <DropdownMenuItem onClick={() => setIsMoveDialogOpen(true)}>
@@ -192,6 +157,15 @@ export default function FolderItem({
         itemType="folder"
         folders={folders}
         excludeFolderId={folder.id}
+      />
+
+      {/* Color Picker Dialog */}
+      <ColorPickerDialog
+        open={isColorPickerOpen}
+        onOpenChange={setIsColorPickerOpen}
+        onConfirm={handleColorChange}
+        currentColor={selectedFolder?.color}
+        folderName={selectedFolder?.name || ""}
       />
     </>
   );

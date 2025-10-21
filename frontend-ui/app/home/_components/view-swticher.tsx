@@ -9,15 +9,19 @@ import { Grid, List } from "lucide-react";
 interface ViewSwitcherProps {
   folders: any;
   files: any;
-  allFolders: FolderDbItem[]; 
+  allFolders: FolderDbItem[];
 }
 
-export default function ViewSwitcher({ folders, files, allFolders }: ViewSwitcherProps) {
+export default function ViewSwitcher({
+  folders,
+  files,
+  allFolders,
+}: ViewSwitcherProps) {
   const { view, setView } = useViewStore();
 
   console.log("🔀 ViewSwitcher:", {
     displayFolders: folders?.length || 0,
-    allFolders: allFolders?.length || 0, 
+    allFolders: allFolders?.length || 0,
   });
 
   return (
@@ -40,17 +44,9 @@ export default function ViewSwitcher({ folders, files, allFolders }: ViewSwitche
       </div>
 
       {view === "grid" ? (
-        <DriveGrid 
-          folders={folders} 
-          files={files}
-          allFolders={allFolders} 
-        />
+        <DriveGrid folders={folders} files={files} allFolders={allFolders} />
       ) : (
-        <DriveTable 
-          folders={folders} 
-          files={files}
-          allFolders={allFolders} 
-        />
+        <DriveTable folders={folders} files={files} allFolders={allFolders} />
       )}
     </div>
   );

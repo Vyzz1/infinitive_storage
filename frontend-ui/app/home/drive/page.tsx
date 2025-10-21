@@ -11,7 +11,8 @@ export default async function MyDrivePage() {
     getAllFolders(),
   ]);
 
-  const hasContent = (files && files.length > 0) || (folders && folders.length > 0);
+  const hasContent =
+    (files && files.length > 0) || (folders && folders.length > 0);
 
   return (
     <div className="flex-1 overflow-auto">
@@ -49,10 +50,10 @@ export default async function MyDrivePage() {
                     <div></div>
                   </div>
                   {folders.map((folder) => (
-                    <FolderItem 
-                      key={folder.id} 
+                    <FolderItem
+                      key={folder.id}
                       folder={folder}
-                      folders={allFolders || []} 
+                      folders={allFolders || []}
                     />
                   ))}
                 </div>
@@ -71,10 +72,10 @@ export default async function MyDrivePage() {
                     <div></div>
                   </div>
                   {files.map((file) => (
-                    <FileItem 
-                      key={file.id} 
+                    <FileItem
+                      key={file.id}
                       file={file}
-                      folders={allFolders || []} 
+                      folders={allFolders || []}
                     />
                   ))}
                 </div>

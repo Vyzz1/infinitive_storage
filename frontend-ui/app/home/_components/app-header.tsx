@@ -24,7 +24,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -59,33 +58,30 @@ export function AppHeader({ user }: AppHeaderProps) {
       .slice(0, 2);
   };
 
-  const handleSearch = useCallback(
-    async (query: string) => {
-      if (!query.trim()) {
-        setSearchResults({ files: [], folders: [] });
-        setShowResults(false);
-        return;
-      }
+  const handleSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults({ files: [], folders: [] });
+      setShowResults(false);
+      return;
+    }
 
-      setIsSearching(true);
-      setShowResults(true);
+    setIsSearching(true);
+    setShowResults(true);
 
-      try {
-        const [files, folders] = await Promise.all([
-          searchFiles(query),
-          searchFolders(query),
-        ]);
+    try {
+      const [files, folders] = await Promise.all([
+        searchFiles(query),
+        searchFolders(query),
+      ]);
 
-        setSearchResults({ files, folders });
-      } catch (error) {
-        console.error("Search error:", error);
-        toast.error("Failed to search");
-      } finally {
-        setIsSearching(false);
-      }
-    },
-    []
-  );
+      setSearchResults({ files, folders });
+    } catch (error) {
+      console.error("Search error:", error);
+      toast.error("Failed to search");
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -99,12 +95,12 @@ export function AppHeader({ user }: AppHeaderProps) {
 
   const handleFileClick = (file: FileDbItem) => {
     sessionStorage.setItem(`file_${file.id}`, JSON.stringify(file));
-    
-    window.open(`/preview/${file.id}`, '_blank');
-    
+
+    window.open(`/preview/${file.id}`, "_blank");
+
     setShowResults(false);
     setSearchQuery("");
-    
+
     toast.success("Opening file in new tab...");
   };
 
@@ -114,7 +110,8 @@ export function AppHeader({ user }: AppHeaderProps) {
     setSearchQuery("");
   };
 
-  const totalResults = searchResults.files.length + searchResults.folders.length;
+  const totalResults =
+    searchResults.files.length + searchResults.folders.length;
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-6">
@@ -154,7 +151,9 @@ export function AppHeader({ user }: AppHeaderProps) {
                   ) : (
                     <>
                       {searchResults.folders.length > 0 && (
-                        <CommandGroup heading={`Folders (${searchResults.folders.length})`}>
+                        <CommandGroup
+                          heading={`Folders (${searchResults.folders.length})`}
+                        >
                           {searchResults.folders.slice(0, 5).map((folder) => (
                             <CommandItem
                               key={folder.id}
@@ -166,18 +165,21 @@ export function AppHeader({ user }: AppHeaderProps) {
                                 className="mr-2 h-4 w-4"
                               />
                               <span>{folder.name}</span>
-                              {folder.location && folder.location !== "root" && (
-                                <span className="ml-auto text-xs text-muted-foreground">
-                                  {folder.location}
-                                </span>
-                              )}
+                              {folder.location &&
+                                folder.location !== "root" && (
+                                  <span className="ml-auto text-xs text-muted-foreground">
+                                    {folder.location}
+                                  </span>
+                                )}
                             </CommandItem>
                           ))}
                         </CommandGroup>
                       )}
 
                       {searchResults.files.length > 0 && (
-                        <CommandGroup heading={`Files (${searchResults.files.length})`}>
+                        <CommandGroup
+                          heading={`Files (${searchResults.files.length})`}
+                        >
                           {searchResults.files.slice(0, 5).map((file) => (
                             <CommandItem
                               key={file.id}
