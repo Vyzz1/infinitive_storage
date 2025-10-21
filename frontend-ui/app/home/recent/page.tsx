@@ -1,12 +1,12 @@
 import { getRecentFiles } from "@/app/actions/file.action";
-import { getAllFolders } from "@/app/actions/folder.action"; 
+import { getAllFolders } from "@/app/actions/folder.action";
 import FileItem from "../_components/file-item";
 import { Clock } from "lucide-react";
 
 export default async function RecentFilesPage() {
   const [files, allFolders] = await Promise.all([
     getRecentFiles(),
-    getAllFolders(), 
+    getAllFolders(),
   ]);
 
   return (
@@ -15,7 +15,7 @@ export default async function RecentFilesPage() {
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Recent Files</h1>
           <p className="text-muted-foreground">
-            Files you've recently opened or modified
+            Files you&apos;ve recently opened or modified
           </p>
         </div>
 
@@ -40,11 +40,7 @@ export default async function RecentFilesPage() {
               <div></div>
             </div>
             {files.map((file) => (
-              <FileItem 
-                key={file.id} 
-                file={file}
-                folders={allFolders || []} 
-              />
+              <FileItem key={file.id} file={file} folders={allFolders || []} />
             ))}
           </div>
         )}

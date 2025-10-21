@@ -160,6 +160,10 @@ export class FolderService {
     return updatedFolder;
   }
 
+  async changeFolderColor(userId: string, folderId: string, color: string) {
+    return this.updateFolder(userId, folderId, { color });
+  }
+
   async deleteFolder(userId: string, folderId: string) {
     const folderToDelete = await this.getFolderById(userId, folderId);
 

@@ -43,7 +43,9 @@ export function MoveToFolderDialog({
 }: MoveToFolderDialogProps) {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+    new Set()
+  );
 
   // Build folder tree with memoization
   const folderTree = useMemo(() => {
@@ -55,9 +57,9 @@ export function MoveToFolderDialog({
         return rootFolders;
       }
 
-      const filteredFolders = folders.filter(f => f.id !== excludeFolderId);
+      const filteredFolders = folders.filter((f) => f.id !== excludeFolderId);
 
-      filteredFolders.forEach(folder => {
+      filteredFolders.forEach((folder) => {
         folderMap.set(folder.id, {
           id: folder.id,
           name: folder.name,
@@ -65,7 +67,7 @@ export function MoveToFolderDialog({
         });
       });
 
-      filteredFolders.forEach(folder => {
+      filteredFolders.forEach((folder) => {
         const node = folderMap.get(folder.id);
         if (!node) return;
 
@@ -89,7 +91,7 @@ export function MoveToFolderDialog({
     if (open) {
       const allFolderIds = new Set<string>();
       const collectIds = (nodes: FolderNode[]) => {
-        nodes.forEach(node => {
+        nodes.forEach((node) => {
           allFolderIds.add(node.id);
           collectIds(node.children);
         });
@@ -98,6 +100,7 @@ export function MoveToFolderDialog({
       setExpandedFolders(allFolderIds);
       setSelectedFolderId(currentFolderId || null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, currentFolderId]);
 
   const toggleFolder = (folderId: string) => {
@@ -149,30 +152,30 @@ export function MoveToFolderDialog({
                 e.stopPropagation();
                 toggleFolder(node.id);
               }}
-              className="p-1 hover:bg-muted-foreground/20 rounded transition-colors flex-shrink-0" 
+              className="p-1 hover:bg-muted-foreground/20 rounded transition-colors flex-shrink-0"
             >
               {isExpanded ? (
-                <ChevronDown className="h-4 w-4 text-foreground" /> 
+                <ChevronDown className="h-4 w-4 text-foreground" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-foreground" /> 
+                <ChevronRight className="h-4 w-4 text-foreground" />
               )}
             </button>
           ) : (
-            <span className="w-6 flex-shrink-0" /> 
+            <span className="w-6 flex-shrink-0" />
           )}
 
           <Folder
             className={cn(
               "h-4 w-4 flex-shrink-0",
-              isSelected ? "text-primary" : "text-blue-500", 
-              hasChildren && "text-amber-500" 
+              isSelected ? "text-primary" : "text-blue-500",
+              hasChildren && "text-amber-500"
             )}
           />
 
           <span
             className={cn(
-              "text-sm flex-1 truncate", 
-              isSelected && "font-semibold text-primary", 
+              "text-sm flex-1 truncate",
+              isSelected && "font-semibold text-primary",
               !isSelected && "group-hover:text-foreground"
             )}
           >
@@ -186,8 +189,8 @@ export function MoveToFolderDialog({
         </div>
 
         {hasChildren && isExpanded && (
-          <div className="mt-0.5"> 
-            {node.children.map(child => renderFolderNode(child, level + 1))}
+          <div className="mt-0.5">
+            {node.children.map((child) => renderFolderNode(child, level + 1))}
           </div>
         )}
       </div>
@@ -200,14 +203,14 @@ export function MoveToFolderDialog({
         <DialogHeader>
           <DialogTitle>Move {itemType}</DialogTitle>
           <DialogDescription>
-            Choose a destination folder for "{itemName}"
+            Choose a destination folder for &quot;{itemName}&quot;
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-4">
           <div
             className={cn(
-              "flex items-center gap-2 px-3 py-2.5 rounded-md cursor-pointer hover:bg-muted transition-colors mb-3", 
+              "flex items-center gap-2 px-3 py-2.5 rounded-md cursor-pointer hover:bg-muted transition-colors mb-3",
               selectedFolderId === null && "bg-primary/10 hover:bg-primary/15"
             )}
             onClick={() => setSelectedFolderId(null)}
@@ -215,28 +218,32 @@ export function MoveToFolderDialog({
             <Home
               className={cn(
                 "h-4 w-4 flex-shrink-0",
-                selectedFolderId === null ? "text-primary" : "text-muted-foreground"
+                selectedFolderId === null
+                  ? "text-primary"
+                  : "text-muted-foreground"
               )}
             />
             <span
               className={cn(
                 "text-sm",
-                selectedFolderId === null && "font-semibold text-primary" 
+                selectedFolderId === null && "font-semibold text-primary"
               )}
             >
               Root (Home)
             </span>
           </div>
 
-          <ScrollArea className="h-[350px] border rounded-md p-2"> 
+          <ScrollArea className="h-[350px] border rounded-md p-2">
             {folderTree.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-8">
                 <Folder className="h-12 w-12 text-muted-foreground/50 mb-3" />
-                <p className="text-sm text-muted-foreground">No folders available</p>
+                <p className="text-sm text-muted-foreground">
+                  No folders available
+                </p>
               </div>
             ) : (
-              <div className="space-y-0.5"> 
-                {folderTree.map(node => renderFolderNode(node))}
+              <div className="space-y-0.5">
+                {folderTree.map((node) => renderFolderNode(node))}
               </div>
             )}
           </ScrollArea>

@@ -29,13 +29,18 @@ import { RenameDialog } from "./rename-dialog";
 import { FileViewer } from "./file-viewer";
 import { FileDetailsDialog } from "./file-details-dialog";
 import { MoveToFolderDialog } from "./move-to-folder-dialog";
-import { deleteFile, renameFile, invalidateTag, moveFileToFolder } from "@/app/actions/file.action";
+import {
+  deleteFile,
+  renameFile,
+  invalidateTag,
+  moveFileToFolder,
+} from "@/app/actions/file.action";
 import { toast } from "sonner";
 
-export default function FileThumb({ 
+export default function FileThumb({
   file,
-  folders 
-}: { 
+  folders,
+}: {
   file: FileDbItem;
   folders: FolderDbItem[];
 }) {
@@ -113,8 +118,8 @@ export default function FileThumb({
 
   const handleDownload = async () => {
     fetch(file.url)
-      .then(res => res.blob())
-      .then(blob => {
+      .then((res) => res.blob())
+      .then((blob) => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -127,30 +132,30 @@ export default function FileThumb({
       .catch(() => {
         window.open(file.url, "_blank");
       });
-    
+
     toast.success("Download started!");
   };
 
   const handleMove = async (targetFolderId: string | null) => {
-  setIsLoading(true);
-  try {
-    await moveFileToFolder(file.id, targetFolderId);
-    
-    toast.success("File moved successfully");
-    setIsMoveDialogOpen(false);
-    await invalidateTag("file");
-  } catch (error: any) {
-    toast.error(error.message || "Failed to move file");
-    console.error(error);
-    throw error;
-  } finally {
-    setIsLoading(false);
-  }
-};
+    setIsLoading(true);
+    try {
+      await moveFileToFolder(file.id, targetFolderId);
+
+      toast.success("File moved successfully");
+      setIsMoveDialogOpen(false);
+      await invalidateTag("file");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to move file");
+      console.error(error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDoubleClick = () => {
     sessionStorage.setItem(`file_${file.id}`, JSON.stringify(file));
-    window.open(`/preview/${file.id}`, '_blank');
+    window.open(`/preview/${file.id}`, "_blank");
   };
 
   const handlePreview = (e: React.MouseEvent) => {
@@ -161,7 +166,7 @@ export default function FileThumb({
   const handleVideoClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     sessionStorage.setItem(`file_${file.id}`, JSON.stringify(file));
-    window.open(`/preview/${file.id}`, '_blank');
+    window.open(`/preview/${file.id}`, "_blank");
   };
 
   const getDocumentIconColor = (ext: string) => {
@@ -337,7 +342,9 @@ export default function FileThumb({
             ) : (
               <div className="h-full w-full bg-gradient-to-br from-muted to-muted/50 flex flex-col items-center justify-center gap-3 transition-colors duration-200 group-hover:from-muted/80 group-hover:to-muted/30">
                 <svg
-                  className={`w-20 h-20 ${getDocumentIconColor(file.extension)} group-hover:scale-110 transition-transform`}
+                  className={`w-20 h-20 ${getDocumentIconColor(
+                    file.extension
+                  )} group-hover:scale-110 transition-transform`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

@@ -1,8 +1,9 @@
-import React from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { FileAudio, FileText } from 'lucide-react';
-import { formatFileSize } from './utils';
+import React from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { FileAudio, FileText } from "lucide-react";
+import { formatFileSize } from "./utils";
+import Image from "next/image";
 
 interface FileViewerComponent {
   component: React.FC;
@@ -12,27 +13,54 @@ export class FileViewerFactory {
   static getViewerForFile(file: FileDbItem): FileViewerComponent {
     const ext = file.extension.toLowerCase();
 
-    if (['xlsx', 'xls', 'doc', 'docx', 'ppt', 'pptx'].includes(ext)) {
+    if (["xlsx", "xls", "doc", "docx", "ppt", "pptx"].includes(ext)) {
       return { component: () => <MicrosoftOfficeViewer file={file} /> };
     }
 
-    if (ext === 'pdf') {
+    if (ext === "pdf") {
       return { component: () => <PDFViewer file={file} /> };
     }
 
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) {
+    if (["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp"].includes(ext)) {
       return { component: () => <ImageViewer file={file} /> };
     }
 
-    if (['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(ext)) {
+    if (["mp4", "webm", "ogg", "mov", "avi"].includes(ext)) {
       return { component: () => <VideoViewer file={file} /> };
     }
 
-    if (['mp3', 'wav', 'ogg', 'm4a', 'aac'].includes(ext)) {
+    if (["mp3", "wav", "ogg", "m4a", "aac"].includes(ext)) {
       return { component: () => <AudioViewer file={file} /> };
     }
 
-    if (['js', 'jsx', 'ts', 'tsx', 'py', 'java', 'cpp', 'c', 'css', 'html', 'json', 'xml', 'sql', 'sh', 'md'].includes(ext)) {
+    if (
+      [
+        "js",
+        "jsx",
+        "ts",
+        "tsx",
+        "py",
+        "java",
+        "cpp",
+        "c",
+        "css",
+        "html",
+        "json",
+        "xml",
+        "sql",
+        "sh",
+        "md",
+        "yml",
+        "yaml",
+        "go",
+        "rb",
+        "php",
+        "rs",
+        "swift",
+        "kt",
+        "ex",
+      ].includes(ext)
+    ) {
       return { component: () => <CodeViewer file={file} /> };
     }
 
@@ -40,10 +68,11 @@ export class FileViewerFactory {
   }
 }
 
-
 const MicrosoftOfficeViewer: React.FC<{ file: FileDbItem }> = ({ file }) => {
-  const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(file.url)}`;
-  
+  const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+    file.url
+  )}`;
+
   return (
     <div className="w-full h-full">
       <iframe
@@ -71,10 +100,11 @@ const PDFViewer: React.FC<{ file: FileDbItem }> = ({ file }) => {
 const ImageViewer: React.FC<{ file: FileDbItem }> = ({ file }) => {
   return (
     <div className="relative w-full h-full flex items-center justify-center bg-black/90 rounded-lg overflow-hidden">
-      <img 
-        src={file.url} 
-        alt={file.fileName} 
-        className="max-w-full max-h-full object-contain"
+      <Image
+        src={file.url}
+        alt={file.fileName}
+        fill
+        style={{ objectFit: "contain" }}
       />
     </div>
   );
@@ -83,10 +113,10 @@ const ImageViewer: React.FC<{ file: FileDbItem }> = ({ file }) => {
 const VideoViewer: React.FC<{ file: FileDbItem }> = ({ file }) => {
   return (
     <div className="w-full h-full flex items-center justify-center bg-black rounded-lg overflow-hidden">
-      <video 
-        controls 
-        className="max-w-full max-h-full" 
-        src={file.url} 
+      <video
+        controls
+        className="max-w-full max-h-full"
+        src={file.url}
         preload="metadata"
       >
         Your browser does not support the video tag.
@@ -104,7 +134,8 @@ const AudioViewer: React.FC<{ file: FileDbItem }> = ({ file }) => {
       <div className="text-center">
         <h3 className="text-lg font-semibold mb-2">{file.fileName}</h3>
         <p className="text-sm text-muted-foreground">
-          {file.extension.toUpperCase()} Audio File • {formatFileSize(file.size)}
+          {file.extension.toUpperCase()} Audio File •{" "}
+          {formatFileSize(file.size)}
         </p>
       </div>
       <audio controls className="w-full max-w-md" src={file.url}>
@@ -120,8 +151,8 @@ const CodeViewer: React.FC<{ file: FileDbItem }> = ({ file }) => {
 
   React.useEffect(() => {
     fetch(file.url)
-      .then(res => res.text())
-      .then(text => setCode(text))
+      .then((res) => res.text())
+      .then((text) => setCode(text))
       .catch(() => setCode("Unable to load code"))
       .finally(() => setIsLoading(false));
   }, [file.url]);
@@ -140,11 +171,11 @@ const CodeViewer: React.FC<{ file: FileDbItem }> = ({ file }) => {
         language={file.extension}
         style={vscDarkPlus}
         showLineNumbers
-        customStyle={{ 
-          margin: 0, 
-          borderRadius: '0.5rem', 
-          fontSize: '0.875rem', 
-          height: '100%' 
+        customStyle={{
+          margin: 0,
+          borderRadius: "0.5rem",
+          fontSize: "0.875rem",
+          height: "100%",
         }}
       >
         {code}

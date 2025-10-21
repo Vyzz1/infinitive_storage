@@ -1,12 +1,12 @@
 import { getDocumentFiles } from "@/app/actions/file.action";
-import { getAllFolders } from "@/app/actions/folder.action"; 
+import { getAllFolders } from "@/app/actions/folder.action";
 import FileItem from "../_components/file-item";
 import { FileText } from "lucide-react";
 
 export default async function DocumentsPage() {
   const [files, allFolders] = await Promise.all([
     getDocumentFiles(),
-    getAllFolders(), 
+    getAllFolders(),
   ]);
 
   return (
@@ -40,11 +40,7 @@ export default async function DocumentsPage() {
               <div></div>
             </div>
             {files.map((file) => (
-              <FileItem 
-                key={file.id} 
-                file={file}
-                folders={allFolders || []} 
-              />
+              <FileItem key={file.id} file={file} folders={allFolders || []} />
             ))}
           </div>
         )}

@@ -54,7 +54,7 @@ export function FileDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg! w-full! overflow-hidden">
         <DialogHeader>
           <DialogTitle>File Details</DialogTitle>
         </DialogHeader>
@@ -65,8 +65,10 @@ export function FileDetailsDialog({
             <div className="flex-shrink-0">
               <FileIcon file={file} className="w-12 h-12" />
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-medium truncate">{file.fileName}</h3>
+            <div className=" min-w-0">
+              <h3 className="font-medium truncate break-words text-sm ">
+                {file.fileName}
+              </h3>
               <p className="text-sm text-muted-foreground">
                 {formatFileSize(file.size)}
               </p>
@@ -87,15 +89,6 @@ export function FileDetailsDialog({
               </div>
             ))}
           </div>
-
-          {file.url && (
-            <div className="pt-4 border-t">
-              <p className="text-xs text-muted-foreground mb-2">File URL:</p>
-              <p className="text-xs font-mono bg-muted p-2 rounded break-all">
-                {file.url}
-              </p>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>

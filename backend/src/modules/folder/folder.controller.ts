@@ -90,4 +90,12 @@ export class FolderController {
       moveData.targetParentId || null,
     );
   }
+  @Put(':id/color')
+  async changeFolderColor(
+    @User() user: any,
+    @Param('id') id: string,
+    @Body('color') color: string,
+  ) {
+    return this.folderService.changeFolderColor(user.id, id, color);
+  }
 }

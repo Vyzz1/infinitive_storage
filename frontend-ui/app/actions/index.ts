@@ -25,6 +25,7 @@ const apiFetch = async (url: string, options: RequestInit = {}) => {
     },
     credentials: "include",
   });
+
   if (res.status === 401) {
     console.log("Access token expired, attempting to refresh...");
 

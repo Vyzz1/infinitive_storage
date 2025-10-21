@@ -162,9 +162,9 @@ export const getFolderSize = async (folderId: string): Promise<number> => {
     }
 
     const files: FileDbItem[] = await filesRes.json();
-    
+
     let totalSize = 0;
-    files.forEach(file => {
+    files.forEach((file) => {
       totalSize += file.size || 0;
     });
 
@@ -175,7 +175,7 @@ export const getFolderSize = async (folderId: string): Promise<number> => {
 
     if (subfoldersRes.ok) {
       const subfolders: FolderDbItem[] = await subfoldersRes.json();
-      
+
       for (const subfolder of subfolders) {
         const subfolderSize = await getFolderSize(subfolder.id);
         totalSize += subfolderSize;
@@ -187,4 +187,24 @@ export const getFolderSize = async (folderId: string): Promise<number> => {
     console.error("Error calculating folder size:", error);
     return 0;
   }
+};
+
+export const changeFolderColor = async (
+  folderId: string,
+  color: string | null
+) => {
+  console.log("Changing folder color:", folderId, color);
+  const res = await apiFetch(`/folder/${folderId}/color`, {
+    method: "PUT",
+    body: JSON.stringify({ color }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    console.error("Failed to change folder color:", error);
+    throw new Error(error.message || "Failed to change folder color");
+  }
+
+  revalidateTag("folder");
+  return await res.json();
 };

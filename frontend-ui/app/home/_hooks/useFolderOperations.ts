@@ -2,13 +2,20 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { deleteFolder, renameFolder } from "@/app/actions/folder.action";
+import {
+  deleteFolder,
+  renameFolder,
+  changeFolderColor,
+} from "@/app/actions/folder.action";
 import { invalidateTag } from "@/app/actions/file.action";
 
 export function useFolderOperations() {
-  const [selectedFolder, setSelectedFolder] = useState<FolderDbItem | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<FolderDbItem | null>(
+    null
+  );
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -49,6 +56,22 @@ export function useFolderOperations() {
     }
   };
 
+  const handleColorChange = async (color: string | null) => {
+    if (!selectedFolder) return;
+
+    try {
+      await changeFolderColor(selectedFolder.id, color);
+      toast.success("Folder color changed successfully");
+      setIsColorPickerOpen(false);
+      setSelectedFolder(null);
+      await invalidateTag("folder");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to change folder color");
+      console.error(error);
+      throw error;
+    }
+  };
+
   const openDeleteDialog = (folder: FolderDbItem) => {
     setSelectedFolder(folder);
     setIsDeleteDialogOpen(true);
@@ -59,16 +82,25 @@ export function useFolderOperations() {
     setIsRenameDialogOpen(true);
   };
 
+  const openColorPicker = (folder: FolderDbItem) => {
+    setSelectedFolder(folder);
+    setIsColorPickerOpen(true);
+  };
+
   return {
     selectedFolder,
     isDeleteDialogOpen,
     isRenameDialogOpen,
+    isColorPickerOpen,
     isLoading,
     setIsDeleteDialogOpen,
     setIsRenameDialogOpen,
+    setIsColorPickerOpen,
     handleDelete,
     handleRename,
+    handleColorChange,
     openDeleteDialog,
     openRenameDialog,
+    openColorPicker,
   };
 }

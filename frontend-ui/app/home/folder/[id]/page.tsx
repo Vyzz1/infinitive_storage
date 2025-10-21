@@ -2,7 +2,7 @@ import { getFilesInFolder } from "@/app/actions/file.action";
 import {
   getFolderBreadcrumbs,
   getFoldersInFolder,
-  getAllFolders, 
+  getAllFolders,
 } from "@/app/actions/folder.action";
 import ViewSwitcher from "../../_components/view-swticher";
 import EmptyState from "@/components/empty-state";
@@ -19,7 +19,7 @@ export default async function Page({
     getFilesInFolder(id),
     getFoldersInFolder(id),
     getFolderBreadcrumbs(id),
-    getAllFolders(), 
+    getAllFolders(),
   ]);
 
   const isEmpty = files?.length === 0 && folders?.length === 0;
@@ -31,11 +31,7 @@ export default async function Page({
       {isEmpty ? (
         <EmptyState />
       ) : (
-        <ViewSwitcher 
-          folders={folders} 
-          files={files}
-          allFolders={allFolders} 
-        />
+        <ViewSwitcher folders={folders} files={files} allFolders={allFolders} />
       )}
     </section>
   );
