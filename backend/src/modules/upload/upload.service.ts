@@ -28,8 +28,11 @@ export class UploadService {
       url: fileURL,
       folderId,
       size: file.size,
-      type: this.getFileType(file.mimetype),
+      type: this.getFileType(file.mimetype, decodedName),
     };
+
+    console.log(fileParams.type);
+
     const { id } = await this.fileService.createFile(userId, fileParams);
 
     if (shouldGenerateThumbnail(fileParams.extension)) {
@@ -55,23 +58,33 @@ export class UploadService {
     return await Promise.all(uploadPromises);
   }
 
-  private getFileType(mime: string) {
+  private getFileType(mime: string, filename: string) {
+    const ext = filename.split('.').pop()?.toLowerCase() || '';
+
     if (mime.startsWith('image/')) return FileType.IMAGE;
     if (mime.startsWith('video/')) return FileType.VIDEO;
     if (mime.startsWith('audio/')) return FileType.AUDIO;
-    if (mime.startsWith('application/pdf')) return FileType.PDF;
+    if (mime === 'application/pdf' || ext === 'pdf') return FileType.PDF;
+
+    if (codeExts.includes(ext)) return FileType.CODE;
+
+    const documentExts = [
+      'doc',
+      'docx',
+      'ppt',
+      'pptx',
+      'xls',
+      'xlsx',
+      'txt',
+      'rtf',
+    ];
     if (
+      documentExts.includes(ext) ||
       mime.startsWith('application/msword') ||
       mime.startsWith('application/vnd') ||
       mime.startsWith('text/')
     )
       return FileType.DOCUMENT;
-
-    const ext = mime.split('/').pop();
-
-    if (codeExts.includes(ext || '')) {
-      return FileType.CODE;
-    }
 
     return FileType.OTHER;
   }
