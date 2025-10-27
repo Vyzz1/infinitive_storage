@@ -1,7 +1,3 @@
-# Microservices Kubernetes Deployment Guide
-
-This repository contains Kubernetes configuration files for deploying a microservices application consisting of frontend, backend, and data services.
-
 ## Project Structure
 
 ```
@@ -25,6 +21,7 @@ This repository contains Kubernetes configuration files for deploying a microser
 └── secrets/
     ├── backend.yaml             # Backend environment secrets
     └── data.yaml                # Data services credentials
+
 ```
 
 ## Prerequisites
@@ -142,14 +139,6 @@ kubectl logs <pod-name> -n <namespace>
 kubectl get ingress -A
 ```
 
-### Common Issues
-
-1. **Backend Pods in Error State**: Check if there's an issue with the start.sh script. If it contains Windows line endings (CRLF), convert them to Unix line endings (LF).
-
-2. **Service Connection Issues**: Ensure services are correctly referenced using Kubernetes DNS format: `<service-name>.<namespace>.svc.cluster.local`.
-
-3. **Ingress Not Working**: Verify the ingress controller is running and the hosts are properly configured in your local hosts file.
-
 ## Maintenance
 
 ### Update Deployments
@@ -175,11 +164,3 @@ To delete all resources:
 ```bash
 kubectl delete -f <folder>/ -R
 ```
-
-## Additional Notes
-
-- The backend services use environment variables from secrets for configuration
-- PostgreSQL, Redis, and RabbitMQ are deployed with persistent storage
-- All services are namespaced for better isolation and management
-
-For any questions or issues, please open an issue in the repository.

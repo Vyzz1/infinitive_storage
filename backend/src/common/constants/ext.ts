@@ -18,4 +18,9 @@ export const codeExts = [
   'rb',
   'go',
   'txt',
+  'tsx',
+  'php',
+  'rs',
+  'swift',
+  'kt',
 ];

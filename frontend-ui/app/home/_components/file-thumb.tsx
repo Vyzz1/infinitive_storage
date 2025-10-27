@@ -62,6 +62,8 @@ export default function FileThumb({
 
   useEffect(() => {
     if (isCodeFile) {
+      console.log("Fetching code file content...");
+      console.log(file.url);
       setLoading(true);
       fetch(file.url)
         .then((res) => res.text())
@@ -188,6 +190,9 @@ export default function FileThumb({
   };
 
   const getDocumentTypeName = (ext: string) => {
+    if (isCodeFile) {
+      return "Code File";
+    }
     switch (ext.toLowerCase()) {
       case "doc":
       case "docx":
